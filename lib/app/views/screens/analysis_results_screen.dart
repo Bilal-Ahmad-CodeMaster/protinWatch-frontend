@@ -162,7 +162,7 @@ class AnalysisResultsScreen extends StatelessWidget {
 
               final score = result.threatScore;
               final alertId = result.alert?.alertId ?? 'PW-MONITOR';
-              final isActiveAlert = score.combinedThreatIndex >= 75;
+              final isActiveAlert = score.combinedThreatIndex >= 75 || score.esm2Score >= 61;
               
               // Load the real-time streamed briefs from the controller!
               final briefEn = c.geminiBriefEn.value.isNotEmpty

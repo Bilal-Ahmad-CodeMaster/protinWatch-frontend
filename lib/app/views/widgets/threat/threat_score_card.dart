@@ -18,7 +18,7 @@ class ThreatScoreCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color statusColor = threatIndex >= 75
+    final Color statusColor = (threatIndex >= 75 || (esm2Score * 100) >= 61)
         ? AppTheme.criticalRed
         : (threatIndex >= 50 ? AppTheme.warningAmber : AppTheme.safeGreen);
     final w = MediaQuery.sizeOf(context).width;
