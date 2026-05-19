@@ -133,7 +133,7 @@ class CustomTopNavbar extends StatelessWidget {
                               if (isSelected) ...[
                                 const SizedBox(width: 8),
                                 Text(
-                                  (item.label as Text).data ?? '',
+                                  item.label ?? '',
                                   style: GoogleFonts.outfit(
                                     color: activeColor,
                                     fontWeight: FontWeight.bold,
