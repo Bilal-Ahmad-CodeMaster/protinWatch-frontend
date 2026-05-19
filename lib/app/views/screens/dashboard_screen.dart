@@ -15,10 +15,10 @@ class DashboardScreen extends StatelessWidget {
 
   Marker _buildMarker(BuildContext context, SequenceModel seq, double w) {
     final score = seq.threatScore.combinedThreatIndex;
-    final color = score >= 75
+    final isCritical = score >= 75 || seq.threatScore.esm2Score >= 61;
+    final color = isCritical
         ? AppTheme.criticalRed
         : (score >= 50 ? AppTheme.warningAmber : AppTheme.safeGreen);
-    final isCritical = score >= 75;
     final label = seq.name.split(' ').first;
 
     return Marker(
@@ -116,9 +116,6 @@ class DashboardScreen extends StatelessWidget {
     final h = MediaQuery.sizeOf(context).height;
     final custom_map.MapController mapController = Get.find();
 
-
-
-
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: Column(
@@ -197,7 +194,9 @@ class DashboardScreen extends StatelessWidget {
                         final list = mapController.markers;
                         final count = list
                             .where(
-                              (s) => s.threatScore.combinedThreatIndex >= 75,
+                              (s) =>
+                                  s.threatScore.combinedThreatIndex >= 75 ||
+                                  s.threatScore.esm2Score >= 61,
                             )
                             .length;
                         return Text(
@@ -339,7 +338,7 @@ class DashboardScreen extends StatelessWidget {
                 itemBuilder: (context, index) {
                   final seq = sequences[index];
                   final score = seq.threatScore.combinedThreatIndex;
-                  final color = score >= 75
+                  final color = (score >= 75 || seq.threatScore.esm2Score >= 61)
                       ? AppTheme.criticalRed
                       : (score >= 50
                             ? AppTheme.warningAmber

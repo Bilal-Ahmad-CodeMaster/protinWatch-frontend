@@ -257,14 +257,22 @@ class ApiService extends GetxService {
           'esm': esm,
           'lang': language,
         },
-        options: Options(responseType: ResponseType.stream),
+        options: Options(
+          responseType: ResponseType.stream,
+          receiveTimeout: Duration.zero,
+          sendTimeout: Duration.zero,
+        ),
       );
 
-      final stream = response.data!.stream;
-      await for (final chunk in stream) {
-        final text = utf8.decode(chunk);
+      final stream = response.data!.stream.cast<List<int>>().transform(
+        utf8.decoder,
+      );
+      await for (final text in stream) {
         // Basic SSE parser (extract data lines)
         for (var line in text.split('\n')) {
+          if (line.endsWith('\r')) {
+            line = line.substring(0, line.length - 1);
+          }
           if (line.startsWith('data: ')) {
             yield line.substring(6);
           }

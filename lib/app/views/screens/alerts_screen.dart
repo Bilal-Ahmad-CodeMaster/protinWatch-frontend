@@ -62,7 +62,8 @@ class AlertsScreen extends StatelessWidget {
                     itemBuilder: (context, index) {
                       final alert = alerts[index];
                       final score = alert.threatScore.combinedThreatIndex;
-                      final color = score >= 75
+                      final isCritical = score >= 75 || alert.threatScore.esm2Score >= 61;
+                      final color = isCritical
                           ? AppTheme.criticalRed
                           : (score >= 50
                                 ? AppTheme.warningAmber
@@ -148,7 +149,7 @@ class AlertsScreen extends StatelessWidget {
                                   ),
 
                                   // 2. Metrics (Progress bars) - only for Critical or Monitor
-                                  if (score >= 50) ...[
+                                  if (score >= 50 || alert.threatScore.esm2Score >= 61) ...[
                                     SizedBox(height: w * 0.02),
                                     _buildMetricRow(
                                       w,
@@ -235,7 +236,8 @@ class AlertsScreen extends StatelessWidget {
     String text = '';
     Color color = Colors.transparent;
 
-    if (score >= 75) {
+    final isCritical = score >= 75 || alert.threatScore.esm2Score >= 61;
+    if (isCritical) {
       final alertId = alert.alert?.alertId ?? 'PW-2019-001';
       text = 'ALERT DISPATCHED · $alertId';
       color = AppTheme.criticalRed;

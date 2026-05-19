@@ -2,6 +2,12 @@ import 'package:get/get.dart';
 import '../services/api_service.dart';
 import '../models/sequence_model.dart';
 
+class SeparatorMatch {
+  final int index;
+  final int length;
+  SeparatorMatch(this.index, this.length);
+}
+
 class AnalysisResultsController extends GetxController {
   final String sequence;
   final ApiService _api = Get.find<ApiService>();
@@ -23,6 +29,72 @@ class AnalysisResultsController extends GetxController {
   void onInit() {
     super.onInit();
     startAnalysis();
+  }
+
+  SeparatorMatch? _findUrduSeparator(String text) {
+    final lower = text.toLowerCase();
+    
+    // Find the first occurrence of "urdu" case-insensitively
+    final urduIdx = lower.indexOf('urdu');
+    if (urduIdx == -1) return null;
+    
+    // Look backward up to 10 characters for prefix formatting like '**', '##', or '---'
+    int startIndex = urduIdx;
+    for (int i = urduIdx - 1; i >= 0 && i >= urduIdx - 10; i--) {
+      if (text.substring(i).startsWith('**') ||
+          text.substring(i).startsWith('##') ||
+          text.substring(i).startsWith('---')) {
+        startIndex = i;
+        break;
+      }
+    }
+    
+    // Look forward up to 35 characters for closing formatting like '**', ':', or a newline '\n'
+    int endIndex = urduIdx + 4;
+    for (int i = urduIdx + 4; i < text.length && i <= urduIdx + 35; i++) {
+      if (text.substring(i).startsWith('**')) {
+        endIndex = i + 2;
+        break;
+      } else if (text.substring(i).startsWith('\n')) {
+        endIndex = i + 1;
+        break;
+      }
+    }
+    
+    return SeparatorMatch(startIndex, endIndex - startIndex);
+  }
+
+  String _cleanEnglishPrefix(String text) {
+    var cleaned = text.trim();
+    final lower = cleaned.toLowerCase();
+    
+    final prefixes = [
+      '**english crisis brief**',
+      '**english version**',
+      '**english brief**',
+      '**english translation**',
+      '**english**',
+      'english crisis brief:',
+      'english version:',
+      'english brief:',
+    ];
+    
+    for (final prefix in prefixes) {
+      if (lower.startsWith(prefix)) {
+        cleaned = cleaned.substring(prefix.length).trim();
+        break;
+      }
+    }
+    
+    // Also check if it starts with "**english" followed by closing "**"
+    if (cleaned.toLowerCase().startsWith('**english')) {
+      final closingIdx = cleaned.indexOf('**', 9);
+      if (closingIdx != -1) {
+        cleaned = cleaned.substring(closingIdx + 2).trim();
+      }
+    }
+    
+    return cleaned;
   }
 
   Future<void> startAnalysis() async {
@@ -60,35 +132,31 @@ class AnalysisResultsController extends GetxController {
       stepResults[4] = 'Compiling Brief...';
       activeStep.value = 5;
 
-      // Stream English Brief
+      // Stream the combined brief from the backend and split it in real-time
       try {
+        String accumulated = '';
         await for (final chunk in _api.streamBrief(
           sequence: sequence,
           threatIndex: result.threatScore.combinedThreatIndex.toDouble(),
           kmer: result.threatScore.kmerScore.toDouble(),
           esm: result.threatScore.esm2Score.toDouble(),
-          language: 'en',
         )) {
-          geminiBriefEn.value += chunk;
-        }
-      } catch (e) {
-        print('Error streaming English brief: $e');
-        geminiBriefEn.value = 'Failed to compile English brief.';
-      }
+          accumulated += chunk;
 
-      // Stream Urdu Brief
-      try {
-        await for (final chunk in _api.streamBrief(
-          sequence: sequence,
-          threatIndex: result.threatScore.combinedThreatIndex.toDouble(),
-          kmer: result.threatScore.kmerScore.toDouble(),
-          esm: result.threatScore.esm2Score.toDouble(),
-          language: 'ur',
-        )) {
-          geminiBriefUr.value += chunk;
+          final match = _findUrduSeparator(accumulated);
+          if (match != null) {
+            // Found Urdu separator! Everything before is English, everything after is Urdu
+            final rawEn = accumulated.substring(0, match.index).trim();
+            geminiBriefEn.value = _cleanEnglishPrefix(rawEn);
+            geminiBriefUr.value = accumulated.substring(match.index + match.length).trim();
+          } else {
+            // No separator yet: keep putting all incoming text in the English brief
+            geminiBriefEn.value = _cleanEnglishPrefix(accumulated.trim());
+          }
         }
       } catch (e) {
-        print('Error streaming Urdu brief: $e');
+        print('Error streaming briefs: $e');
+        geminiBriefEn.value = 'Failed to compile English brief.';
         geminiBriefUr.value = 'Failed to compile Urdu brief.';
       }
 

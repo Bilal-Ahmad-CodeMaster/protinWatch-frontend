@@ -22,7 +22,8 @@ class ThreatCard extends StatelessWidget {
       }
 
       final score = threatController.threatIndex.value;
-      final Color statusColor = score >= 75
+      final esm2 = threatController.esm2Score.value;
+      final Color statusColor = (score >= 75 || esm2 >= 61)
           ? AppTheme.criticalRed
           : (score >= 50 ? AppTheme.warningAmber : AppTheme.safeGreen);
 
@@ -37,7 +38,7 @@ class ThreatCard extends StatelessWidget {
           ),
           boxShadow: [
             BoxShadow(
-              color: statusColor.withValues(alpha: score >= 75 ? 0.2 : 0.05),
+              color: statusColor.withValues(alpha: (score >= 75 || esm2 >= 61) ? 0.2 : 0.05),
               blurRadius: 4,
               spreadRadius: -10,
             ),

@@ -187,7 +187,7 @@ class AlertDetailsPage extends StatelessWidget {
             ),
             SizedBox(height: w * 0.015),
             ActionPanelWidget(
-              isActive: alert.threatScore.combinedThreatIndex >= 75,
+              isActive: alert.threatScore.combinedThreatIndex >= 75 || alert.threatScore.esm2Score >= 61,
               alertId: alert.id,
               threatIndex: alert.threatScore.combinedThreatIndex,
               kmerScore: alert.threatScore.kmerScore,

@@ -32,7 +32,7 @@ class _FullscreenMapScreenState extends State<FullscreenMapScreen> {
     super.dispose();
   }
 
-  Color _threatColor(int score) => score >= 75
+  Color _threatColor(int score, int esm2Score) => (score >= 75 || esm2Score >= 61)
       ? AppTheme.criticalRed
       : (score >= 50 ? AppTheme.warningAmber : AppTheme.safeGreen);
 
@@ -45,7 +45,9 @@ class _FullscreenMapScreenState extends State<FullscreenMapScreen> {
       body: Obx(() {
         final sequences = _mapController.markers;
         final criticalCount = sequences
-            .where((s) => s.threatScore.combinedThreatIndex >= 75)
+            .where((s) =>
+                s.threatScore.combinedThreatIndex >= 75 ||
+                s.threatScore.esm2Score >= 61)
             .length;
 
         return Stack(
@@ -339,8 +341,9 @@ class _FullscreenMapScreenState extends State<FullscreenMapScreen> {
 
   Marker _buildMarker(BuildContext context, SequenceModel seq, double w) {
     final score = seq.threatScore.combinedThreatIndex;
-    final color = _threatColor(score);
-    final isCritical = score >= 75;
+    final esm2 = seq.threatScore.esm2Score;
+    final color = _threatColor(score, esm2);
+    final isCritical = score >= 75 || esm2 >= 61;
     final label = seq.name.split(' ').first;
 
     return Marker(
