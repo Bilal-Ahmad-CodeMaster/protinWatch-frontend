@@ -62,14 +62,18 @@ class ActionPanelWidget extends StatelessWidget {
             size: w * 0.05,
           ),
           SizedBox(width: w * 0.02),
-          Text(
-            'No active biological crisis alerts. System monitoring.',
-            style: GoogleFonts.outfit(
-              color: AppTheme.secondaryText,
-              fontSize: w * 0.032,
-              fontWeight: FontWeight.w600,
+          Expanded(
+            child: Text(
+              isActive
+                  ? 'Active biological crisis alert.'
+                  : 'No active biological crisis alerts. System monitoring.',
+              style: GoogleFonts.outfit(
+                color: AppTheme.secondaryText,
+                fontSize: w * 0.032,
+                fontWeight: FontWeight.w600,
+              ),
+              textAlign: TextAlign.center,
             ),
-            textAlign: TextAlign.center,
           ),
         ],
       ),
