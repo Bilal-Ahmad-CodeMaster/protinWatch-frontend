@@ -1,0 +1,56 @@
+{
+  "total_free_resources": 14,
+  "trade_off_warning": {
+    "active": true,
+    "title": "Resource Strain Warning",
+    "description": "Diverting additional ambulances from I-8 (Heat Emergency) to G-10 (Urban Flood) will drop I-8 medical response capacity below critical safety margins (30%). Recommend requesting federal backup."
+  },
+  "allocations": {
+    "ISL-FLOOD-001": [
+      {
+        "id": "RES-001",
+        "name": "Rescue Teams",
+        "deployed": 3,
+        "total": 4,
+        "type": "rescue"
+      },
+      {
+        "id": "RES-002",
+        "name": "Police Units",
+        "deployed": 2,
+        "total": 4,
+        "type": "police"
+      },
+      {
+        "id": "RES-003",
+        "name": "Ambulances",
+        "deployed": 2,
+        "total": 6,
+        "type": "medical"
+      }
+    ],
+    "ISL-HEAT-002": [
+      {
+        "id": "RES-004",
+        "name": "Medical Teams",
+        "deployed": 2,
+        "total": 3,
+        "type": "medical"
+      },
+      {
+        "id": "RES-005",
+        "name": "Water Tankers",
+        "deployed": 1,
+        "total": 2,
+        "type": "utility"
+      },
+      {
+        "id": "RES-006",
+        "name": "Ambulances",
+        "deployed": 4,
+        "total": 6,
+        "type": "medical"
+      }
+    ]
+  }
+}

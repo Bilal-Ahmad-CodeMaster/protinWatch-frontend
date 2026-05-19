@@ -1,0 +1,48 @@
+{
+  "sequence": "MFVFLVLLPLVSSQCVNLTTRTQLPPAYTNSFTRGVYYPDKVFRSSVLHSTQDLFLPFFSNVTWFHAIHVSGTNGTKRFDNPVLPFNDGVYFASTEKSNIIRGWIFGTTLDSKTQSLLIVNNATNVVIKVCEFQFCNDPFLGVYYHKNNKSWMESEFRVYSSANNCTFEYVSQPFLMDLEGKQGNFKNLREFVFKNIDGYFKIYSKHTPINLVRDLPQGFSALEPLVDLPIGINITRFQTLLALHRSYLTPGDSSSGWTAGAAAYYVGYLQPRTFLLKYNENGTITDAVDCALDPLSETKCTLKSFTVEKGIYQTSNFRVQPTESIVRFPNITNLCPFGEVFNATRFASVYAWNRKRISNCVADYSVLYNSASFSTFKCYGVSPTKLNDLCFTNVYADSFVIRGDEVRQIAPGQTGKIADYNYKLPDDFTGCVIAWNSNNLDSKVGGNYNYLYRLFRKSNLKPFERDISTEIYQAGSTPCNGVEGFNCYFPLQSYGFQPTNGVGYQPYRVVVLSFELLHAPATVCGPKKSTNLVKNKCVNFNFNGLTGTGVLTESNKKFLPFQQFGRDIADTTDAVRDPQTLEILDITPCSFGGVSVITPGTNTSNQVAVLYQDVNCTEVPVAIHADQLTPTWRVYSTGSNVFQTRAGCLIGAEHVNNSYECDIPIGAGICASYQTQTNSPRRARSVASQSIIAYTMSLGAENSVAYSNNSIAIPTNFTISVTTEILPVSMTKTSVDCTMYICGDSTECSNLLLQYGSFCTQLNRALTGIAVEQDKNTQEVFAQVKQIYKTPPIKDFGGFNFSQILPDPSKPSKRSFIEDLLFNKVTLADAGFIKQYGDCLGDIAARDLICAQKFNGLTVLPPLLTDEMIAQYTSALLAGTITSGWTFGAGAALQIPFAMQMAYRFNGIGVTQNVLYENQKLIANQFNSAIGKIQDSLSSTASALGKLQDVVNQNAQALNTLVKQLSSNFGAISSVLNDILSRLDKVEAEVQIDRLITGRLQSLQTYVTQQLIRAAEIRASANLAATKMSECVLGQSKRVDFCGKGYHLMSFPQSAPHGVVFLHVTYVPAQEKNFTTAPAICHDGKAHFPREGVFVSNGTHWFVTQRNFYEPQIITTDNTFVSGNCDVVIGIVNNTVYDPLQPELDSFKEELDKYFKNHTSPDVDLGDISGINASVVNIQKEIDRLNEVAKNLNESLIDLQELGKYEQYIKWPWYIWLGFIAGLIAIVMVTIMLCCMTSCCSCLKGCCSCGSCCKFDEDDSEPVLKGVKLHYT",
+  "kmer_score": 73,
+  "esm2_score": 91,
+  "structural_tm_score": 0.82,
+  "combined_threat_index": 91,
+  "closest_match": "SARS-CoV (2003) - 79.6% identity",
+  "gemini_brief_en": "SITUATION:\nA novel betacoronavirus sequence has been detected. The sequence exhibits a highly divergent Spike (S) glycoprotein with significant mutations in the Receptor Binding Domain (RBD).\n\nTHREAT LEVEL:\nCRITICAL (Confidence: 94%)\n\nWHY DANGEROUS:\nStructural analysis (TM-Score 0.82) indicates optimized binding affinity for the human ACE2 receptor. Furthermore, a novel polybasic cleavage site (RRAR) has been identified at the S1/S2 junction, a known determinant of viral infectivity and expanded tropism.\n\nSIMILAR OUTBREAKS:\nSARS-CoV (2003) and MERS-CoV (2012). However, the specific RBD configuration suggests potentially higher transmissibility than previous zoonotic events.\n\nRECOMMENDED ACTIONS:\n1. Immediate dispatch of WHO surveillance teams to origin region.\n2. Implementation of enhanced respiratory syndromic surveillance.\n3. Initiation of rapid diagnostic test (RDT) development protocols.",
+  "gemini_brief_ur": "صورتحال:\nایک نیا بیٹا کورونا وائرس سیکونس دریافت ہوا ہے۔ اس سیکونس میں ایک انتہائی مختلف اسپائک (S) گلائکوپروٹین ہے جس کے ریسیپٹر بائنڈنگ ڈومین (RBD) میں نمایاں تبدیلیاں (mutations) موجود ہیں۔\n\nخطرے کی سطح:\nانتہائی خطرناک (اعتماد: 94%)\n\nخطرناک کیوں ہے:\nساختی تجزیہ (TM-Score 0.82) ظاہر کرتا ہے کہ یہ انسانی ACE2 ریسیپٹر کے ساتھ جڑنے کی بہترین صلاحیت رکھتا ہے۔ مزید برآں، S1/S2 جنکشن پر ایک نیا پولی بیسک کلیویج سائٹ (RRAR) دریافت ہوا ہے، جو وائرل انفیکشن اور پھیلاؤ میں اہم کردار ادا کرتا ہے۔\n\nملتے جلتے وائرس:\nسارس کوو (2003) اور مرس کوو (2012)۔ تاہم، مخصوص RBD کی ساخت سے پتہ چلتا ہے کہ اس کے پھیلنے کی صلاحیت پچھلے واقعات سے زیادہ ہو سکتی ہے۔\n\nتجویز کردہ اقدامات:\n1. عالمی ادارہ صحت (WHO) کی نگرانی کی ٹیموں کو فوری طور پر جائے وقوع پر بھیجنا۔\n2. نظام تنفس کی بیماریوں کی نگرانی کو سخت کرنا۔\n3. فوری تشخیصی ٹیسٹ (RDT) تیار کرنے کے عمل کا آغاز کرنا۔",
+  "alert_ticket": {
+    "alert_id": "PW-2019-A7F2C1",
+    "timestamp": "2019-12-26 08:30 UTC",
+    "before_state": "No active biological crisis alerts. System monitoring.",
+    "after_state": "ACTIVE CRISIS — Alert dispatched",
+    "actions_taken": [
+      "WHO Surveillance Team notified — Ref #A7F2C1",
+      "Travel advisory flag raised for origin region",
+      "Sequence escalated to high-priority watchlist"
+    ]
+  },
+  "agent_trace": [
+    {
+      "agent": "DetectionAgent",
+      "action": "Threat Index 91/100 — threshold exceeded",
+      "timestamp": "2019-12-26 08:30:12 UTC",
+      "color": "blue"
+    },
+    {
+      "agent": "VerificationAgent",
+      "action": "AlphaFold structural confirmation checked",
+      "timestamp": "2019-12-26 08:30:17 UTC",
+      "color": "purple"
+    },
+    {
+      "agent": "ResponseAgent",
+      "action": "Alert PW-2019-A7F2C1 created and dispatched",
+      "timestamp": "2019-12-26 08:30:21 UTC",
+      "color": "red"
+    },
+    {
+      "agent": "NotificationAgent",
+      "action": "WHO + stakeholders notified",
+      "timestamp": "2019-12-26 08:30:24 UTC",
+      "color": "green"
+    }
+  ],
+  "pdb_structure": "QVRPTSAgICAgIDEgIE4gICBBTEEgQSAgIDIgICAgICAxNy4yOTUgICAzLjc1NiAgIDE1LjI3OSAgMS4wMCAgMC4wMCAgICAgICAgICAgTg0KQVRPTSAgICAgIDIgIENBICBBTEEgQSAgIDIgICAgICAxNy4zOTAgICA1LjAxOCAgIDE0LjM0OSAgMS4wMCAgMC4wMCAgICAgICAgICAgQw0KQVRPTSAgICAgIDMgIEMgICBBTEEgQSAgIDIgICAgICAxNi4wNjQgICA1LjE5MCAgIDEzLjYwNCAgMS4wMCAgMC4wMCAgICAgICAgICAgQw0KQVRPTSAgICAgIDQgIE8gICBBTEEgQSAgIDIgICAgICAxNS4wNDcgICA1LjYxMCAgIDE0LjE3MSAgMS4wMCAgMC4wMCAgICAgICAgICAgTw0KQVRPTSAgICAgIDUgIENCICBBTEEgQSAgIDIgICAgICAxOC41NTkgICA0LjgxNyAgIDEzLjM4NiAgMS4wMCAgMC4wMCAgICAgICAgICAgQw0KQVRPTSAgICAgIDYgIE4gICBBU04gQSAgIDMgICAgICAxNi4wNzQgICA0Ljg2NCAgIDEyLjMxMSAgMS4wMCAgMC4wMCAgICAgICAgICAgTg0KQVRPTSAgICAgIDcgIENBICBBU04gQSAgIDMgICAgICAxNC44NzIgICA0Ljk4MiAgIDExLjQ3NCAgMS4wMCAgMC4wMCAgICAgICAgICAgQw0KQVRPTSAgICAgIDggIEMgICBBU04gQSAgIDMgICAgICAxNS4wNzcgICA0LjExNyAgIDEwLjI0NyAgMS4wMCAgMC4wMCAgICAgICAgICAgQw0KQVRPTSAgICAgIDkgIE8gICBBU04gQSAgIDMgICAgICAxNi4xNTcgICAzLjUzMiAgIDEwLjEzNCAgMS4wMCAgMC4wMCAgICAgICAgICAgTw0KQVRPTSAgICAgMTAgIENCICBBU04gQSAgIDMgICAgICAxNC41MzIgICA2LjQxNiAgIDExLjAxMyAgMS4wMCAgMC4wMCAgICAgICAgICAgQw0KQVRPTSAgICAgMTEgIENHICBBU04gQSAgIDMgICAgICAxMy43NDQgICA2LjM4OSAgICA5LjcxNiAgMS4wMCAgMC4wMCAgICAgICAgICAgQw0KQVRPTSAgICAgMTIgIE9EMSAgQVNOIEEgICAzICAgICAgMTQuMzIxICA2LjY4MSAgICA4LjY3MyAgMS4wMCAgMC4wMCAgICAgICAgICAgTw0KQVRPTSAgICAgMTMgIE5EMiAgQVNOIEEgICAzICAgICAgMTIuNDQ4ICA2LjA1NiAgICA5Ljc4MSAgMS4wMCAgMC4wMCAgICAgICAgICAgTg0KVEVSCQ0KRU5E"
+}

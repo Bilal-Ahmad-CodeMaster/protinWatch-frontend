@@ -1,0 +1,35 @@
+[
+  {
+    "id": "ALT-001",
+    "stakeholder": "Public Alert",
+    "status": "delivered",
+    "message": "URGENT: Flash flood warning for G-10 sector. Avoid Kashmir Highway. Seek higher ground immediately.",
+    "timestamp": "14:03:00",
+    "type": "sms_broadcast"
+  },
+  {
+    "id": "ALT-002",
+    "stakeholder": "DHQ Hospital",
+    "status": "delivered",
+    "message": "CODE RED: Prepare for incoming trauma casualties from G-10. Activating overflow protocol.",
+    "timestamp": "14:03:05",
+    "type": "api_webhook"
+  },
+  {
+    "id": "ALT-003",
+    "stakeholder": "WASA Utility",
+    "status": "pending",
+    "message": "Dispatching heavy pumping units to G-10 Markaz coordinates.",
+    "timestamp": "14:03:10",
+    "type": "dispatch_order"
+  },
+  {
+    "id": "ALT-004",
+    "stakeholder": "Media & Command",
+    "status": "delivered",
+    "message": "RETRACTION NOTICE: Reports of G-10 Dam collapse are FALSE. Confirmed by satellite. Do not panic.",
+    "timestamp": "14:03:15",
+    "type": "press_release",
+    "is_retraction": true
+  }
+]

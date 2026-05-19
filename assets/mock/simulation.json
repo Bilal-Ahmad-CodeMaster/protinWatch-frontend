@@ -1,0 +1,18 @@
+{
+  "crisis_id": "ISL-FLOOD-001",
+  "before_state": {
+    "response_time": "18 mins",
+    "congestion_level": "Severe (92%)",
+    "teams_deployed": 2,
+    "hospital_status": "Overwhelmed",
+    "road_rerouting": "None"
+  },
+  "after_state": {
+    "response_time": "7 mins",
+    "congestion_level": "Moderate (45%)",
+    "teams_deployed": 6,
+    "hospital_status": "Managed",
+    "road_rerouting": "Active (Srinagar Hwy)"
+  },
+  "side_effects_warning": "Diverting traffic to Srinagar Hwy will cause a 25% increase in transit time for I-8 medical evacuations. Adjusting EMS routes to compensate."
+}

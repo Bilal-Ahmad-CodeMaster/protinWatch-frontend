@@ -1,0 +1,62 @@
+[
+  {
+    "id": "SIG-001",
+    "crisis_id": "ISL-FLOOD-001",
+    "source": "Twitter/X @IslUpdates",
+    "credibility": "high",
+    "content": "Water levels rising rapidly near G-10 Markaz. Several cars submerged. Need rescue boats!",
+    "confidence": 94,
+    "time_ago": "2m ago",
+    "type": "social"
+  },
+  {
+    "id": "SIG-002",
+    "crisis_id": "ISL-FLOOD-001",
+    "source": "PMD Weather Node",
+    "credibility": "official",
+    "content": "Unprecedented cloudburst over Sector G. Precipitation exceeded 45mm in 30 mins.",
+    "confidence": 99,
+    "time_ago": "5m ago",
+    "type": "weather"
+  },
+  {
+    "id": "SIG-003",
+    "crisis_id": "ISL-FLOOD-001",
+    "source": "Islamabad Traffic Police",
+    "credibility": "official",
+    "content": "Kashmir Highway near G-10 blocked due to waterlogging. Diverting traffic to Srinagar Hwy.",
+    "confidence": 96,
+    "time_ago": "8m ago",
+    "type": "traffic"
+  },
+  {
+    "id": "SIG-004",
+    "crisis_id": "ISL-HEAT-002",
+    "source": "PIMS Hospital Sensor",
+    "credibility": "high",
+    "content": "Surge in heatstroke admissions from I-8 sector. Approaching bed capacity limit.",
+    "confidence": 88,
+    "time_ago": "12m ago",
+    "type": "social"
+  },
+  {
+    "id": "SIG-005",
+    "crisis_id": "ISL-HEAT-002",
+    "source": "CDA Power Grid",
+    "credibility": "official",
+    "content": "Transformer overload in I-8. Scheduled shutdown to prevent cascading failure.",
+    "confidence": 95,
+    "time_ago": "15m ago",
+    "type": "traffic"
+  },
+  {
+    "id": "SIG-006",
+    "crisis_id": "ISL-FLOOD-001",
+    "source": "Unknown Telegram Node",
+    "credibility": "low",
+    "content": "G-10 dam has collapsed! Complete evacuation ordered by military.",
+    "confidence": 23,
+    "time_ago": "1m ago",
+    "type": "conflict"
+  }
+]

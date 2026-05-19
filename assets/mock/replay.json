@@ -1,0 +1,52 @@
+{
+  "sequence": [
+    {
+      "step": 1,
+      "name": "Dashboard Initialization",
+      "delay_ms": 1000,
+      "description": "System boots. Initial monitoring state."
+    },
+    {
+      "step": 2,
+      "name": "Signal Stream Active",
+      "delay_ms": 2500,
+      "description": "Weather and traffic signals populate the feed."
+    },
+    {
+      "step": 3,
+      "name": "Conflicting Intelligence Arrival",
+      "delay_ms": 3000,
+      "description": "Unverified Telegram report regarding dam collapse enters the system."
+    },
+    {
+      "step": 4,
+      "name": "Crisis Escalation",
+      "delay_ms": 2000,
+      "description": "G-10 flood severity spikes to 87 based on sensor fusion."
+    },
+    {
+      "step": 5,
+      "name": "Resource Reallocation",
+      "delay_ms": 3500,
+      "description": "AI automatically shifts ambulances, triggering a trade-off warning."
+    },
+    {
+      "step": 6,
+      "name": "Predictive Simulation",
+      "delay_ms": 4000,
+      "description": "Before/After mitigation results rendered for Commander review."
+    },
+    {
+      "step": 7,
+      "name": "Agent Trace Finalization",
+      "delay_ms": 2000,
+      "description": "Timeline log populates showing exact agent execution metrics."
+    },
+    {
+      "step": 8,
+      "name": "False Alarm Retraction",
+      "delay_ms": 2500,
+      "description": "Verification Agent clears the conflicting signal and issues public retraction."
+    }
+  ]
+}

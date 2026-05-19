@@ -1,0 +1,37 @@
+[
+  {
+    "agent_name": "SignalFusionAgent",
+    "status": "completed",
+    "timestamp": "14:02:11",
+    "log": "Ingested 1,432 signals from X/Twitter, PMD sensors, and Traffic nodes. Normalized unstructured text into spatial vectors.",
+    "execution_time_ms": 340
+  },
+  {
+    "agent_name": "CrisisDetectionAgent",
+    "status": "completed",
+    "timestamp": "14:02:14",
+    "log": "Identified anomalous correlation between G-10 water levels and traffic gridlock. Instantiated crisis model ISL-FLOOD-001. Calculated severity: 87.",
+    "execution_time_ms": 1120
+  },
+  {
+    "agent_name": "ResourceAllocationAgent",
+    "status": "completed",
+    "timestamp": "14:02:18",
+    "log": "Evaluated federal reserve vs local limits. Reallocated 2 Ambulances from I-8 (Heat) to G-10 (Flood). Warning: I-8 medical capacity critically low.",
+    "execution_time_ms": 890
+  },
+  {
+    "agent_name": "ResponseSimulationAgent",
+    "status": "completed",
+    "timestamp": "14:02:25",
+    "log": "Ran 5,000 Monte Carlo routing permutations. Determined Srinagar Hwy rerouting reduces response time by 11 mins.",
+    "execution_time_ms": 4200
+  },
+  {
+    "agent_name": "VerificationAgent",
+    "status": "warning",
+    "timestamp": "14:02:27",
+    "log": "Flagged Telegram report SIG-006 (G-10 Dam Collapse) as LOW CREDIBILITY. No corroborating satellite data. Initiating false alarm retraction.",
+    "execution_time_ms": 210
+  }
+]

@@ -1,0 +1,30 @@
+[
+  {
+    "id": "ISL-FLOOD-001",
+    "type": "urban_flood",
+    "location": "G-10 Islamabad",
+    "coordinates": {
+      "lat": 33.6938,
+      "lng": 73.0156
+    },
+    "severity": 87,
+    "confidence": 91,
+    "affected_population": 12400,
+    "duration_estimate": "4-6 hours",
+    "status": "critical"
+  },
+  {
+    "id": "ISL-HEAT-002",
+    "type": "heat_emergency",
+    "location": "I-8 Islamabad",
+    "coordinates": {
+      "lat": 33.6936,
+      "lng": 73.0551
+    },
+    "severity": 62,
+    "confidence": 78,
+    "affected_population": 4200,
+    "duration_estimate": "6-8 hours",
+    "status": "warning"
+  }
+]
