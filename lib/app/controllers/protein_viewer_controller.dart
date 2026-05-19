@@ -17,20 +17,18 @@ class ProteinViewerController extends GetxController {
 
   ProteinViewerController({required this.pdbData});
 
-  bool get _isUnsupportedPlatform {
-    if (kIsWeb) return false;
+  bool get isUnsupportedPlatform {
     try {
-      if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
-        return true;
-      }
-    } catch (_) {}
-    return false;
+      return Platform.isWindows || Platform.isLinux || Platform.isMacOS;
+    } catch (_) {
+      return kIsWeb;
+    }
   }
 
   @override
   void onInit() {
     super.onInit();
-    if (_isUnsupportedPlatform) {
+    if (isUnsupportedPlatform) {
       isLoading.value = false;
       hasError.value = true;
       return;
@@ -39,7 +37,7 @@ class ProteinViewerController extends GetxController {
   }
 
   void _initWebView() {
-    if (_isUnsupportedPlatform) return;
+    if (isUnsupportedPlatform) return;
     controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setBackgroundColor(AppTheme.background)

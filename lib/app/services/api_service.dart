@@ -223,6 +223,7 @@ class ApiService extends GetxService {
   Future<String> getStructure(String sequenceId) async {
     try {
       final response = await _dio.get('/structure/$sequenceId');
+      print('PDB Response for $sequenceId: ${response.data}');
       if (response.data is Map && response.data.containsKey('pdb')) {
         return response.data['pdb'].toString();
       }
