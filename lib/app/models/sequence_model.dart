@@ -109,10 +109,10 @@ class SequenceModel {
       threatScore: ThreatScoreModel(
         kmerScore: ((json['kmer_score'] ?? json['kmer'] ?? 0) as num).toInt(),
         esm2Score: ((json['esm2_score'] ?? json['esm'] ?? 0) as num).toInt(),
-        structuralTmScore:
-            ((json['structural_score'] ?? json['structural_tm_score'] ?? 0.0)
-                    as num)
-                .toDouble(),
+        structuralTmScore: (() {
+          double score = ((json['structural_score'] ?? json['structural_tm_score'] ?? 0.0) as num).toDouble();
+          return score > 1.0 ? score / 100.0 : score;
+        })(),
         combinedThreatIndex:
             ((json['threat_index'] ?? json['combined_threat_index'] ?? 0)
                     as num)

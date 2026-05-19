@@ -3,6 +3,8 @@ import 'package:webview_flutter/webview_flutter.dart';
 import 'package:get/get.dart';
 import 'package:flutter/services.dart';
 import 'dart:convert';
+import 'dart:io' show Platform;
+import 'package:flutter/foundation.dart' show kIsWeb;
 import '../theme/app_theme.dart';
 
 class ProteinViewerController extends GetxController {
@@ -15,13 +17,27 @@ class ProteinViewerController extends GetxController {
 
   ProteinViewerController({required this.pdbData});
 
+  bool get isUnsupportedPlatform {
+    try {
+      return Platform.isWindows || Platform.isLinux || Platform.isMacOS;
+    } catch (_) {
+      return kIsWeb;
+    }
+  }
+
   @override
   void onInit() {
     super.onInit();
+    if (isUnsupportedPlatform) {
+      isLoading.value = false;
+      hasError.value = true;
+      return;
+    }
     _initWebView();
   }
 
   void _initWebView() {
+    if (isUnsupportedPlatform) return;
     controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setBackgroundColor(AppTheme.background)

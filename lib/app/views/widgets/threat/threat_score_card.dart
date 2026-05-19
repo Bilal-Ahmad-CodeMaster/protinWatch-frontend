@@ -22,6 +22,7 @@ class ThreatScoreCard extends StatelessWidget {
         ? AppTheme.criticalRed
         : (threatIndex >= 50 ? AppTheme.warningAmber : AppTheme.safeGreen);
     final w = MediaQuery.sizeOf(context).width;
+    print('structural value being passed to ThreatScoreCard widget: $structuralScore');
 
     return Card(
       elevation: 2,
@@ -116,7 +117,7 @@ class ThreatScoreCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    '${(val * 100).toInt()}%',
+                    '${(val > 1.0 ? val : val * 100).toInt()}%',
                     style: GoogleFonts.outfit(
                       color: color,
                       fontWeight: FontWeight.bold,

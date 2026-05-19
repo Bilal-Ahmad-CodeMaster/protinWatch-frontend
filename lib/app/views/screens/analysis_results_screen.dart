@@ -180,7 +180,7 @@ class AnalysisResultsScreen extends StatelessWidget {
                     threatIndex: score.combinedThreatIndex.toDouble(),
                     kmerScore: score.kmerScore / 100.0,
                     esm2Score: score.esm2Score / 100.0,
-                    structuralScore: score.structuralTmScore / 100.0, // Scale down to 0.0 - 1.0 range
+                    structuralScore: score.structuralTmScore, // Already 0.0 - 1.0 range
                   ).animate().fade().scale(),
                   SizedBox(height: w * 0.03),
                   ActionPanelWidget(

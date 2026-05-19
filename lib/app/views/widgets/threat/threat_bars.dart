@@ -19,6 +19,7 @@ class ThreatBars extends StatelessWidget {
   Widget build(BuildContext context) {
     final w = MediaQuery.sizeOf(context).width;
     final labelWidth = w * 0.22;
+    print('structural value being passed to ThreatBars widget: $structuralScore');
     return Column(
       children: [
         _buildBar(
@@ -104,7 +105,7 @@ class ThreatBars extends StatelessWidget {
         SizedBox(
           width: labelWidth * 0.35,
           child: Text(
-            '${(percentage * 100).toInt()}%',
+            '${(percentage > 1.0 ? percentage : percentage * 100).toInt()}%',
             style: GoogleFonts.outfit(
               color: color,
               fontSize: labelWidth * 0.14,

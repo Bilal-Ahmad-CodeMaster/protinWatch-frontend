@@ -135,10 +135,16 @@ class _ProteinViewerState extends State<ProteinViewer>
                 border: Border.all(color: AppTheme.cardBorder, width: 0.5),
                 borderRadius: BorderRadius.circular(14),
               ),
-              child: const Center(
-                child: Text(
-                  'Failed to load 3D Viewer',
-                  style: TextStyle(color: AppTheme.criticalRed),
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Text(
+                    c.isUnsupportedPlatform 
+                      ? '3D viewer only works on Android/iOS. Structure data is loading from backend'
+                      : 'Failed to load 3D Viewer',
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(color: AppTheme.criticalRed),
+                  ),
                 ),
               ),
             );
