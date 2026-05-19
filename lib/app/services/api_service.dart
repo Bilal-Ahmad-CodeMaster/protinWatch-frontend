@@ -18,7 +18,6 @@ class ApiService extends GetxService {
   Future<ApiService> init() async {
     String activeUrl = _baseUrl;
 
-    // Smart Fallback: Automatically swap localhost/127.0.0.1 to 10.0.2.2 on Android Emulators
     try {
       if (Platform.isAndroid) {
         if (activeUrl.contains('localhost')) {
@@ -34,6 +33,32 @@ class ApiService extends GetxService {
         baseUrl: activeUrl,
         connectTimeout: const Duration(seconds: 5),
         receiveTimeout: const Duration(seconds: 5),
+      ),
+    );
+
+    _dio.interceptors.add(
+      InterceptorsWrapper(
+        onRequest: (options, handler) {
+          print(
+            '🌐 API CALL: [${options.method}] ${options.baseUrl}${options.path}',
+          );
+          if (options.queryParameters.isNotEmpty) {
+            print('   Params: ${options.queryParameters}');
+          }
+          return handler.next(options);
+        },
+        onResponse: (response, handler) {
+          print(
+            '✅ API RESPONSE: [${response.statusCode}] ${response.requestOptions.path}',
+          );
+          return handler.next(response);
+        },
+        onError: (DioException e, handler) {
+          print(
+            '❌ API ERROR: [${e.response?.statusCode}] ${e.requestOptions.path} -> ${e.message}',
+          );
+          return handler.next(e);
+        },
       ),
     );
 
@@ -82,9 +107,12 @@ class ApiService extends GetxService {
     }
   }
 
-  Future<List<SequenceModel>> getHistory() async {
+  Future<List<SequenceModel>> getHistory({int? limit}) async {
     try {
-      final response = await _dio.get('/history');
+      final response = await _dio.get(
+        '/history',
+        queryParameters: limit != null ? {'limit': limit} : null,
+      );
       return (response.data as List)
           .map((e) => SequenceModel.fromJson(e))
           .toList();
@@ -195,6 +223,9 @@ class ApiService extends GetxService {
   Future<String> getStructure(String sequenceId) async {
     try {
       final response = await _dio.get('/structure/$sequenceId');
+      if (response.data is Map && response.data.containsKey('pdb')) {
+        return response.data['pdb'].toString();
+      }
       return response.data.toString();
     } catch (e) {
       print('API Error (structure), using offline fallback: $e');
@@ -207,12 +238,24 @@ class ApiService extends GetxService {
     }
   }
 
-  Stream<String> streamBrief(String sequenceId, String language) async* {
+  Stream<String> streamBrief({
+    required String sequence,
+    required double threatIndex,
+    required double kmer,
+    required double esm,
+    String? language,
+  }) async* {
     // SSE requires streaming response
     try {
       final response = await _dio.get<ResponseBody>(
         '/stream-brief',
-        queryParameters: {'id': sequenceId, 'lang': language},
+        queryParameters: {
+          'sequence': sequence,
+          'threat_index': threatIndex,
+          'kmer': kmer,
+          'esm': esm,
+          'lang': language,
+        },
         options: Options(responseType: ResponseType.stream),
       );
 
@@ -291,6 +334,16 @@ class ApiService extends GetxService {
     } catch (e) {
       print('API Error (live-fetch): $e');
       return true;
+    }
+  }
+
+  Future<Map<String, dynamic>> checkHealth() async {
+    try {
+      final response = await _dio.get('/health');
+      return response.data as Map<String, dynamic>;
+    } catch (e) {
+      print('API Error (health): $e');
+      return {'model_loaded': false, 'error': e.toString()};
     }
   }
 }

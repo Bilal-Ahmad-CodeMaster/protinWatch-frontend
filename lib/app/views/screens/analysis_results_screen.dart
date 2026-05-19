@@ -124,33 +124,82 @@ class AnalysisResultsScreen extends StatelessWidget {
 
             Obx(() {
               if (!c.showResults.value) return const SizedBox.shrink();
+              final result = c.analysisResult.value;
+
+              if (result == null) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: w * 0.01),
+                    const ThreatScoreCard(
+                      threatIndex: 91,
+                      kmerScore: 0.73,
+                      esm2Score: 0.91,
+                      structuralScore: 0.84,
+                    ).animate().fade().scale(),
+                    SizedBox(height: w * 0.03),
+                    const ActionPanelWidget(
+                      isActive: true,
+                      alertId: 'PW-2019-001',
+                    ).animate().fade().slideY(begin: 0.1),
+                    SizedBox(height: w * 0.03),
+                    const AlertBriefCard(
+                      whoText:
+                          'ProteinWatch AI indicates a novel coronavirus spike protein with 84% structural homology to SARS-CoV but with enhanced binding affinity to ACE2. Immediate attention is recommended.',
+                      cdcText:
+                          'US CDC EOC: Novel respiratory virus sequence detected in Wuhan. Elevated K-mer novelty score (73) and high ESM-2 danger score (91). Protocol Alpha-1 recommended.',
+                      hospitalText:
+                          'HOSPITAL ALERT: Prepare for potential severe respiratory outbreak. Ensure adequate stockpile of PPE and ventilators.',
+                      mediaText:
+                          'A new viral threat has been identified by ProteinWatch early-warning systems, tracking a novel virus in Wuhan, China. Health authorities have been notified.',
+                      urduText:
+                          'پروٹین واچ اے آئی نے ووہان میں ایک نئے وائرس کی نشاندہی کی ہے۔ یہ وائرس سارس جیسا ہے لیکن زیادہ تیزی سے پھیل سکتا ہے۔ فوری اقدامات کی ضرورت ہے۔',
+                    ).animate().fade().slideY(begin: 0.2),
+                    SizedBox(height: w * 0.04),
+                  ],
+                );
+              }
+
+              final score = result.threatScore;
+              final alertId = result.alert?.alertId ?? 'PW-MONITOR';
+              final isActiveAlert = score.combinedThreatIndex >= 75;
+              
+              // Load the real-time streamed briefs from the controller!
+              final briefEn = c.geminiBriefEn.value.isNotEmpty
+                  ? c.geminiBriefEn.value
+                  : 'No brief available.';
+              final briefUr = c.geminiBriefUr.value.isNotEmpty
+                  ? c.geminiBriefUr.value
+                  : 'کوئی تفصیلات دستیاب نہیں ہیں۔';
+
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(height: w * 0.01),
-                  const ThreatScoreCard(
-                    threatIndex: 91,
-                    kmerScore: 0.73,
-                    esm2Score: 0.91,
-                    structuralScore: 0.84,
+                  ThreatScoreCard(
+                    threatIndex: score.combinedThreatIndex.toDouble(),
+                    kmerScore: score.kmerScore / 100.0,
+                    esm2Score: score.esm2Score / 100.0,
+                    structuralScore: score.structuralTmScore / 100.0, // Scale down to 0.0 - 1.0 range
                   ).animate().fade().scale(),
                   SizedBox(height: w * 0.03),
-                  const ActionPanelWidget(
-                    isActive: true,
-                    alertId: 'PW-2019-001',
+                  ActionPanelWidget(
+                    isActive: isActiveAlert,
+                    alertId: alertId,
+                    threatIndex: score.combinedThreatIndex,
+                    kmerScore: score.kmerScore,
+                    esm2Score: score.esm2Score,
+                    structuralScore: score.structuralTmScore,
+                    virusName: result.name,
+                    agentTrace: result.agentTrace,
                   ).animate().fade().slideY(begin: 0.1),
                   SizedBox(height: w * 0.03),
-                  const AlertBriefCard(
-                    whoText:
-                        'ProteinWatch AI indicates a novel coronavirus spike protein with 84% structural homology to SARS-CoV but with enhanced binding affinity to ACE2. Immediate attention is recommended.',
-                    cdcText:
-                        'US CDC EOC: Novel respiratory virus sequence detected in Wuhan. Elevated K-mer novelty score (73) and high ESM-2 danger score (91). Protocol Alpha-1 recommended.',
-                    hospitalText:
-                        'HOSPITAL ALERT: Prepare for potential severe respiratory outbreak. Ensure adequate stockpile of PPE and ventilators.',
-                    mediaText:
-                        'A new viral threat has been identified by ProteinWatch early-warning systems, tracking a novel virus in Wuhan, China. Health authorities have been notified.',
-                    urduText:
-                        'پروٹین واچ اے آئی نے ووہان میں ایک نئے وائرس کی نشاندہی کی ہے۔ یہ وائرس سارس جیسا ہے لیکن زیادہ تیزی سے پھیل سکتا ہے۔ فوری اقدامات کی ضرورت ہے۔',
+                  AlertBriefCard(
+                    whoText: 'WHO Surveillance Team Brief:\n\n$briefEn',
+                    cdcText: 'US CDC Emergency Brief:\n\n$briefEn',
+                    hospitalText: 'Clinical Preparedness Notice:\n\n$briefEn',
+                    mediaText: 'Public Health Advisory:\n\n$briefEn',
+                    urduText: briefUr,
                   ).animate().fade().slideY(begin: 0.2),
                   SizedBox(height: w * 0.04),
                 ],
