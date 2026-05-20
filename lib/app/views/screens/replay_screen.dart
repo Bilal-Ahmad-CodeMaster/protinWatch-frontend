@@ -28,7 +28,12 @@ class ReplayScreen extends GetView<ReplayController> {
       backgroundColor: AppTheme.background,
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
-        padding: EdgeInsets.symmetric(horizontal: w * 0.04, vertical: w * 0.03),
+        padding: EdgeInsets.only(
+          left: w * 0.04,
+          right: w * 0.04,
+          top: MediaQuery.of(context).padding.top + w * 0.03,
+          bottom: MediaQuery.of(context).padding.bottom + w * 0.28,
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -257,139 +262,168 @@ class ReplayScreen extends GetView<ReplayController> {
               ),
             ),
             SizedBox(height: w * 0.04),
-
             // Playback controls panel
             Container(
               padding: EdgeInsets.symmetric(
                 horizontal: w * 0.04,
-                vertical: w * 0.02,
+                vertical: w * 0.03,
               ),
               decoration: BoxDecoration(
                 color: AppTheme.cardSurface,
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(color: AppTheme.cardBorder),
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  // Playback control buttons
-                  Row(
-                    children: [
-                      Obx(
-                        () => ElevatedButton.icon(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: c.isPlaying.value
-                                ? AppTheme.warningAmber.withValues(alpha: 0.2)
-                                : AppTheme.infoBlue.withValues(alpha: 0.2),
-                            foregroundColor: c.isPlaying.value
-                                ? AppTheme.warningAmber
-                                : AppTheme.infoBlue,
-                            side: BorderSide(
-                              color: c.isPlaying.value
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final useColumn = constraints.maxWidth < 400;
+                  final content = [
+                    // Playback control buttons
+                    Row(
+                      mainAxisAlignment: useColumn
+                          ? MainAxisAlignment.center
+                          : MainAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Obx(
+                          () => ElevatedButton.icon(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: c.isPlaying.value
+                                  ? AppTheme.warningAmber.withValues(alpha: 0.2)
+                                  : AppTheme.infoBlue.withValues(alpha: 0.2),
+                              foregroundColor: c.isPlaying.value
                                   ? AppTheme.warningAmber
                                   : AppTheme.infoBlue,
-                            ),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 10,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                          ),
-                          icon: Icon(
-                            c.isPlaying.value ? Icons.pause : Icons.play_arrow,
-                            size: 18,
-                          ),
-                          label: Text(
-                            c.isPlaying.value ? 'Pause' : 'Play',
-                            style: GoogleFonts.outfit(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          onPressed: c.togglePlay,
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      IconButton(
-                        tooltip: 'Skip to End',
-                        icon: const Icon(
-                          Icons.fast_forward,
-                          color: AppTheme.secondaryText,
-                        ),
-                        onPressed: c.skip,
-                      ),
-                      IconButton(
-                        tooltip: 'Reset',
-                        icon: const Icon(
-                          Icons.refresh,
-                          color: AppTheme.secondaryText,
-                        ),
-                        onPressed: c.reset,
-                      ),
-                    ],
-                  ),
-
-                  // Speed Selector Capsules
-                  Row(
-                    children: [
-                      Text(
-                        'Speed: ',
-                        style: GoogleFonts.outfit(
-                          color: AppTheme.secondaryText,
-                          fontSize: w * 0.028,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      const SizedBox(width: 6),
-                      Row(
-                        children: [0.5, 1.0, 2.0].map((speed) {
-                          return Obx(() {
-                            final isSelected = c.playbackSpeed.value == speed;
-                            return GestureDetector(
-                              onTap: () => c.setSpeed(speed),
-                              child: Container(
-                                margin: const EdgeInsets.symmetric(
-                                  horizontal: 3,
-                                ),
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 10,
-                                  vertical: 6,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: isSelected
-                                      ? AppTheme.infoBlue.withValues(
-                                          alpha: 0.15,
-                                        )
-                                      : Colors.transparent,
-                                  borderRadius: BorderRadius.circular(8),
-                                  border: Border.all(
-                                    color: isSelected
-                                        ? AppTheme.infoBlue
-                                        : AppTheme.cardBorder,
-                                    width: 1.2,
-                                  ),
-                                ),
-                                child: Text(
-                                  '${speed}x',
-                                  style: GoogleFonts.outfit(
-                                    color: isSelected
-                                        ? AppTheme.infoBlue
-                                        : AppTheme.secondaryText,
-                                    fontWeight: isSelected
-                                        ? FontWeight.bold
-                                        : FontWeight.normal,
-                                    fontSize: w * 0.028,
-                                  ),
-                                ),
+                              side: BorderSide(
+                                color: c.isPlaying.value
+                                    ? AppTheme.warningAmber
+                                    : AppTheme.infoBlue,
                               ),
-                            );
-                          });
-                        }).toList(),
-                      ),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 10,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                            icon: Icon(
+                              c.isPlaying.value
+                                  ? Icons.pause
+                                  : Icons.play_arrow,
+                              size: 18,
+                            ),
+                            label: Text(
+                              c.isPlaying.value ? 'Pause' : 'Play',
+                              style: GoogleFonts.outfit(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            onPressed: c.togglePlay,
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        IconButton(
+                          tooltip: 'Skip to End',
+                          icon: const Icon(
+                            Icons.fast_forward,
+                            color: AppTheme.secondaryText,
+                          ),
+                          onPressed: c.skip,
+                        ),
+                        IconButton(
+                          tooltip: 'Reset',
+                          icon: const Icon(
+                            Icons.refresh,
+                            color: AppTheme.secondaryText,
+                          ),
+                          onPressed: c.reset,
+                        ),
+                      ],
+                    ),
+
+                    if (useColumn) ...[
+                      const SizedBox(height: 12),
+                      const Divider(color: AppTheme.cardBorder, height: 1),
+                      const SizedBox(height: 12),
                     ],
-                  ),
-                ],
+
+                    // Speed Selector Capsules
+                    Row(
+                      mainAxisAlignment: useColumn
+                          ? MainAxisAlignment.center
+                          : MainAxisAlignment.end,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          'Speed: ',
+                          style: GoogleFonts.outfit(
+                            color: AppTheme.secondaryText,
+                            fontSize: w * 0.028,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        Row(
+                          children: [0.5, 1.0, 2.0].map((speed) {
+                            return Obx(() {
+                              final isSelected = c.playbackSpeed.value == speed;
+                              return GestureDetector(
+                                onTap: () => c.setSpeed(speed),
+                                child: Container(
+                                  margin: const EdgeInsets.symmetric(
+                                    horizontal: 3,
+                                  ),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                    vertical: 6,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: isSelected
+                                        ? AppTheme.infoBlue.withValues(
+                                            alpha: 0.15,
+                                          )
+                                        : Colors.transparent,
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(
+                                      color: isSelected
+                                          ? AppTheme.infoBlue
+                                          : AppTheme.cardBorder,
+                                      width: 1.2,
+                                    ),
+                                  ),
+                                  child: Text(
+                                    '${speed}x',
+                                    style: GoogleFonts.outfit(
+                                      color: isSelected
+                                          ? AppTheme.infoBlue
+                                          : AppTheme.secondaryText,
+                                      fontWeight: isSelected
+                                          ? FontWeight.bold
+                                          : FontWeight.normal,
+                                      fontSize: w * 0.028,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            });
+                          }).toList(),
+                        ),
+                      ],
+                    ),
+                  ];
+
+                  if (useColumn) {
+                    return Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: content,
+                    );
+                  }
+
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: content,
+                  );
+                },
               ),
             ),
             SizedBox(height: w * 0.05),
@@ -783,7 +817,7 @@ class ReplayScreen extends GetView<ReplayController> {
               );
             }),
 
-            const SizedBox(height: 80),
+            const SizedBox(height: 10),
           ],
         ),
       ),

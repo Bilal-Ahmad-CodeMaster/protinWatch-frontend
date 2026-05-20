@@ -5,7 +5,6 @@ import 'threat_controller.dart';
 import 'brief_controller.dart';
 
 class ReplayController extends GetxController {
-  // Use lazy getters to prevent 'BriefController not found' crash when instantiated eager
   SequenceController get _sequenceController => Get.find<SequenceController>();
   ThreatController get _threatController => Get.find<ThreatController>();
   BriefController get _briefController => Get.find<BriefController>();
@@ -18,7 +17,7 @@ class ReplayController extends GetxController {
   final RxBool isPlaying = false.obs;
   final RxString geminiText = ''.obs;
   final RxInt geminiCharIndex = 0.obs;
-  
+
   // Playback speed: 0.5, 1.0, or 2.0
   final RxDouble playbackSpeed = 1.0.obs;
 
@@ -53,7 +52,7 @@ class ReplayController extends GetxController {
     } else {
       if (progress.value >= 1.0) reset();
       isPlaying.value = true;
-      
+
       // Timer ticks every 100ms.
       // Total timeline has 100 ticks at 1x speed (10s total).
       // So at 1x speed, we add 0.01 progress per tick.

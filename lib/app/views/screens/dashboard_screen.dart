@@ -10,6 +10,7 @@ import '../../models/sequence_model.dart';
 import '../../controllers/map_controller.dart' as custom_map;
 import 'fullscreen_map_screen.dart';
 import '../../controllers/sequence_controller.dart';
+import 'package:intl/intl.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
@@ -301,24 +302,34 @@ class DashboardScreen extends StatelessWidget {
                     letterSpacing: 0.5,
                   ),
                 ),
-                Row(
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Container(
-                      width: 6,
-                      height: 6,
-                      decoration: const BoxDecoration(
-                        color: AppTheme.safeGreen,
-                        shape: BoxShape.circle,
-                      ),
-                    ).animate(onPlay: (c) => c.repeat(reverse: true)).fade(),
-                    const SizedBox(width: 6),
-                    Text(
-                      'NCBI · 30m cycle',
-                      style: GoogleFonts.outfit(
-                        color: AppTheme.safeGreen,
-                        fontSize: w * 0.03,
-                        fontWeight: FontWeight.w600,
-                      ),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                              width: 6,
+                              height: 6,
+                              decoration: const BoxDecoration(
+                                color: AppTheme.safeGreen,
+                                shape: BoxShape.circle,
+                              ),
+                            )
+                            .animate(onPlay: (c) => c.repeat(reverse: true))
+                            .fade(),
+                        const SizedBox(width: 6),
+                        Obx(
+                          () => Text(
+                            'NCBI · ${sequenceController.formattedTimeRemaining}',
+                            style: GoogleFonts.outfit(
+                              color: AppTheme.safeGreen,
+                              fontSize: w * 0.03,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -332,96 +343,105 @@ class DashboardScreen extends StatelessWidget {
               final sequences = sequenceController.sequences.isEmpty
                   ? custom_map.MapController.defaultMapMarkers
                   : sequenceController.sequences;
+              return RefreshIndicator(
+                color: AppTheme.infoBlue,
+                backgroundColor: AppTheme.cardSurface,
+                onRefresh: () => sequenceController.refreshData(),
+                child: ListView.builder(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding: EdgeInsets.only(
+                    left: w * 0.04,
+                    right: w * 0.04,
+                    top: w * 0.01,
+                    bottom: MediaQuery.of(context).padding.bottom + w * 0.25,
+                  ),
+                  itemCount: sequences.length,
+                  itemBuilder: (context, index) {
+                    final seq = sequences[index];
+                    final score = seq.threatScore.combinedThreatIndex;
+                    final color = score > 75
+                        ? AppTheme.criticalRed
+                        : (score >= 50
+                              ? AppTheme.warningAmber
+                              : AppTheme.safeGreen);
 
-              return ListView.builder(
-                padding: EdgeInsets.only(
-                  left: w * 0.04,
-                  right: w * 0.04,
-                  top: w * 0.01,
-                  bottom: MediaQuery.of(context).padding.bottom + w * 0.25,
-                ),
-                itemCount: sequences.length,
-                itemBuilder: (context, index) {
-                  final seq = sequences[index];
-                  final score = seq.threatScore.combinedThreatIndex;
-                  final color = score > 75
-                      ? AppTheme.criticalRed
-                      : (score >= 50
-                            ? AppTheme.warningAmber
-                            : AppTheme.safeGreen);
-
-                  return GestureDetector(
-                    onTap: () {
-                      Get.to(() => AlertDetailsPage(alert: seq));
-                    },
-                    child: Container(
-                      margin: EdgeInsets.only(bottom: w * 0.02),
-                      padding: EdgeInsets.symmetric(
-                        horizontal: w * 0.04,
-                        vertical: w * 0.01,
-                      ),
-                      decoration: BoxDecoration(
-                        color: AppTheme.cardSurface,
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(
-                          color: color.withValues(alpha: 0.25),
-                          width: 1.5,
-                        ),
-                      ),
-                      child: Row(
-                        children: [
-                          Container(
-                            width: w * 0.03,
-                            height: w * 0.03,
+                    return GestureDetector(
+                          onTap: () {
+                            Get.to(() => AlertDetailsPage(alert: seq));
+                          },
+                          child: Container(
+                            margin: EdgeInsets.only(bottom: w * 0.02),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: w * 0.04,
+                              vertical: w * 0.01,
+                            ),
                             decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: color,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: color.withValues(alpha: 0.5),
-                                  blurRadius: 6,
-                                  spreadRadius: 1,
-                                ),
-                              ],
+                              color: AppTheme.cardSurface,
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(
+                                color: color.withValues(alpha: 0.25),
+                                width: 1.5,
+                              ),
                             ),
-                          ),
-                          SizedBox(width: w * 0.03),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                            child: Row(
                               children: [
-                                Text(
-                                  seq.name,
-                                  style: GoogleFonts.outfit(
-                                    color: AppTheme.primaryText,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: w * 0.038,
+                                Container(
+                                  width: w * 0.03,
+                                  height: w * 0.03,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: color,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: color.withValues(alpha: 0.5),
+                                        blurRadius: 6,
+                                        spreadRadius: 1,
+                                      ),
+                                    ],
                                   ),
                                 ),
-                                SizedBox(height: w * 0.003),
+                                SizedBox(width: w * 0.03),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        seq.name,
+                                        style: GoogleFonts.outfit(
+                                          color: AppTheme.primaryText,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: w * 0.038,
+                                        ),
+                                      ),
+                                      SizedBox(height: w * 0.003),
+                                      Text(
+                                        seq.originLocation,
+                                        style: GoogleFonts.outfit(
+                                          color: AppTheme.secondaryText,
+                                          fontSize: w * 0.03,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
                                 Text(
-                                  seq.originLocation,
+                                  '$score',
                                   style: GoogleFonts.outfit(
-                                    color: AppTheme.secondaryText,
-                                    fontSize: w * 0.03,
+                                    color: color,
+                                    fontWeight: FontWeight.w800,
+                                    fontSize: w * 0.045,
                                   ),
                                 ),
                               ],
                             ),
                           ),
-                          Text(
-                            '$score',
-                            style: GoogleFonts.outfit(
-                              color: color,
-                              fontWeight: FontWeight.w800,
-                              fontSize: w * 0.045,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ).animate().fade(delay: (50 * index).ms).slideY(begin: 0.05);
-                },
+                        )
+                        .animate()
+                        .fade(delay: (50 * index).ms)
+                        .slideY(begin: 0.05);
+                  },
+                ),
               );
             }),
           ),

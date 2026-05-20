@@ -43,7 +43,12 @@ class AlertDetailsPage extends StatelessWidget {
         elevation: 0,
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.symmetric(horizontal: w * 0.04, vertical: w * 0.02),
+        padding: EdgeInsets.only(
+          left: w * 0.04,
+          right: w * 0.04,
+          top: w * 0.02,
+          bottom: MediaQuery.of(context).padding.bottom + w * 0.04,
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

@@ -18,19 +18,29 @@ class FullscreenMapScreen extends StatefulWidget {
 }
 
 class _FullscreenMapScreenState extends State<FullscreenMapScreen> {
-  final custom_map.MapController _mapController =
-      Get.find<custom_map.MapController>();
   final SequenceController sequenceController = Get.find<SequenceController>();
 
   @override
   void initState() {
     super.initState();
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.light,
+      systemNavigationBarColor: Colors.transparent,
+      systemNavigationBarIconBrightness: Brightness.light,
+    ));
   }
 
   @override
   void dispose() {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.light,
+      systemNavigationBarColor: Colors.transparent,
+      systemNavigationBarIconBrightness: Brightness.light,
+    ));
     super.dispose();
   }
 
@@ -252,7 +262,7 @@ class _FullscreenMapScreenState extends State<FullscreenMapScreen> {
 
             // ── BOTTOM legend ────────────────────────────────────────────
             Positioned(
-                  bottom: w * 0.05,
+                  bottom: MediaQuery.of(context).padding.bottom + w * 0.03,
                   left: w * 0.02,
                   right: w * 0.02,
                   child: Container(

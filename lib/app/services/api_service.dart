@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:convert';
 import 'package:flutter/services.dart';
@@ -247,7 +248,6 @@ class ApiService extends GetxService {
     required double esm,
     String? language,
   }) async* {
-    // SSE requires streaming response
     try {
       final response = await _dio.get<ResponseBody>(
         '/stream-brief',
@@ -269,7 +269,6 @@ class ApiService extends GetxService {
         utf8.decoder,
       );
       await for (final text in stream) {
-        // Basic SSE parser (extract data lines)
         for (var line in text.split('\n')) {
           if (line.endsWith('\r')) {
             line = line.substring(0, line.length - 1);
@@ -281,7 +280,6 @@ class ApiService extends GetxService {
       }
     } catch (e) {
       print('API Error (stream-brief), using offline fallback: $e');
-      // Simulated SSE streaming from offline data
       final fullText = language == 'ur'
           ? _getOfflineData('gemini_brief_ur', 'کوئی ڈیٹا دستیاب نہیں ہے۔')
           : _getOfflineData('gemini_brief_en', 'No brief available.');
@@ -333,7 +331,7 @@ class ApiService extends GetxService {
       return true;
     } catch (e) {
       print('API Error (scheduler/update): $e');
-      return true; // Pretend it succeeded for demo
+      return true;
     }
   }
 
@@ -355,5 +353,10 @@ class ApiService extends GetxService {
       print('API Error (health): $e');
       return {'model_loaded': false, 'error': e.toString()};
     }
+  }
+
+  @override
+  void onClose() {
+    super.onClose();
   }
 }

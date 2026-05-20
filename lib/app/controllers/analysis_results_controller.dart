@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import '../services/api_service.dart';
 import '../models/sequence_model.dart';
+import 'sequence_controller.dart';
 
 class SeparatorMatch {
   final int index;
@@ -110,6 +111,14 @@ class AnalysisResultsController extends GetxController {
       // Await the API call to continue updating step scores
       final SequenceModel result = await apiCall;
       analysisResult.value = result;
+
+      // Automatically refresh history to include this new analysis result
+      try {
+        final sequenceController = Get.find<SequenceController>();
+        sequenceController.refreshData();
+      } catch (e) {
+        print('Could not refresh SequenceController history: $e');
+      }
 
       // Step 1: K-mer Novelty
       await Future.delayed(const Duration(milliseconds: 600));
