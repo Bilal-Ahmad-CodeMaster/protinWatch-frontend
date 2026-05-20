@@ -21,6 +21,16 @@ class ActionPanelHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final w = MediaQuery.sizeOf(context).width;
+    final score = threatIndex ?? 91;
+    final Color headerColor;
+    if (score > 75) {
+      headerColor = AppTheme.criticalRed;
+    } else if (score >= 50) {
+      headerColor = AppTheme.warningAmber;
+    } else {
+      headerColor = AppTheme.safeGreen;
+    }
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -53,7 +63,7 @@ class ActionPanelHeader extends StatelessWidget {
                 children: [
                   Icon(
                     Icons.coronavirus_outlined,
-                    color: AppTheme.criticalRed,
+                    color: headerColor,
                     size: w * 0.04,
                   ),
                   SizedBox(width: w * 0.015),
@@ -62,7 +72,7 @@ class ActionPanelHeader extends StatelessWidget {
                       text: TextSpan(
                         text: virusName ?? 'SARS-CoV-2',
                         style: GoogleFonts.outfit(
-                          color: AppTheme.criticalRed,
+                          color: headerColor,
                           fontWeight: FontWeight.w600,
                           fontSize: w * 0.028,
                         ),
@@ -137,20 +147,30 @@ class ActionPanelHeader extends StatelessWidget {
   }
 
   Widget _buildThreatIndexCard(double w) {
+    final score = threatIndex ?? 91;
+    final Color color;
+    if (score > 75) {
+      color = AppTheme.criticalRed;
+    } else if (score >= 50) {
+      color = AppTheme.warningAmber;
+    } else {
+      color = AppTheme.safeGreen;
+    }
+
     return Container(
       padding: EdgeInsets.symmetric(horizontal: w * 0.025, vertical: w * 0.01),
       decoration: BoxDecoration(
         color: AppTheme.background,
-        border: Border.all(color: AppTheme.criticalRed.withValues(alpha: 0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            '${threatIndex ?? 91}',
+            '$score',
             style: GoogleFonts.outfit(
-              color: AppTheme.criticalRed,
+              color: color,
               fontWeight: FontWeight.w800,
               fontSize: w * 0.05,
               height: 1.1,
@@ -159,7 +179,7 @@ class ActionPanelHeader extends StatelessWidget {
           Text(
             'THREAT INDEX',
             style: GoogleFonts.outfit(
-              color: AppTheme.criticalRed,
+              color: color,
               fontWeight: FontWeight.w700,
               fontSize: w * 0.018,
               letterSpacing: 0.3,
@@ -171,29 +191,41 @@ class ActionPanelHeader extends StatelessWidget {
   }
 
   Widget _buildCriticalBadge(double w) {
+    final score = threatIndex ?? 91;
+    final String label;
+    final Color color;
+    final IconData icon;
+
+    if (score > 75) {
+      label = 'CRITICAL';
+      color = AppTheme.criticalRed;
+      icon = Icons.warning_amber_rounded;
+    } else if (score >= 50) {
+      label = 'MONITOR';
+      color = AppTheme.warningAmber;
+      icon = Icons.visibility_outlined;
+    } else {
+      label = 'SAFE';
+      color = AppTheme.safeGreen;
+      icon = Icons.check_circle_outline;
+    }
+
     return Container(
       padding: EdgeInsets.symmetric(horizontal: w * 0.02, vertical: w * 0.015),
       decoration: BoxDecoration(
-        color: AppTheme.criticalRed.withValues(alpha: 0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: AppTheme.criticalRed.withValues(alpha: 0.3),
-          width: 1,
-        ),
+        border: Border.all(color: color.withValues(alpha: 0.3), width: 1),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            Icons.warning_amber_rounded,
-            color: AppTheme.criticalRed,
-            size: w * 0.03,
-          ),
+          Icon(icon, color: color, size: w * 0.03),
           SizedBox(width: w * 0.01),
           Text(
-            'CRITICAL',
+            label,
             style: GoogleFonts.outfit(
-              color: AppTheme.criticalRed,
+              color: color,
               fontWeight: FontWeight.bold,
               fontSize: w * 0.025,
               letterSpacing: 0.5,

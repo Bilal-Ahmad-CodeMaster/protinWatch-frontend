@@ -14,8 +14,10 @@ class AlertsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ResourceController resourceController = Get.find<ResourceController>();
-    final SequenceController sequenceController = Get.find<SequenceController>();
+    final ResourceController resourceController =
+        Get.find<ResourceController>();
+    final SequenceController sequenceController =
+        Get.find<SequenceController>();
     final w = MediaQuery.sizeOf(context).width;
 
     return Scaffold(
@@ -23,7 +25,7 @@ class AlertsScreen extends StatelessWidget {
       body: SafeArea(
         child: Obx(() {
           final assignments = resourceController.assignments;
-          
+
           if (assignments.isEmpty) {
             return Center(
               child: Text(
@@ -82,21 +84,31 @@ class AlertsScreen extends StatelessWidget {
                         onPressed: () => resourceController.toggleDemo(),
                         icon: Icon(
                           isActive ? Icons.restart_alt : Icons.bolt,
-                          color: isActive ? const Color(0xFF00FF88) : const Color(0xFFFF5555),
+                          color: isActive
+                              ? const Color(0xFF00FF88)
+                              : const Color(0xFFFF5555),
                           size: 16,
                         ),
                         label: Text(
                           isActive ? 'Reset Demo' : 'Simulate Conflict',
                           style: GoogleFonts.outfit(
-                            color: isActive ? const Color(0xFF00FF88) : const Color(0xFFFF5555),
+                            color: isActive
+                                ? const Color(0xFF00FF88)
+                                : const Color(0xFFFF5555),
                             fontWeight: FontWeight.bold,
                             fontSize: w * 0.028,
                           ),
                         ),
                         style: TextButton.styleFrom(
-                          backgroundColor: (isActive ? const Color(0xFF00FF88) : const Color(0xFFFF5555))
-                              .withValues(alpha: 0.12),
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                          backgroundColor:
+                              (isActive
+                                      ? const Color(0xFF00FF88)
+                                      : const Color(0xFFFF5555))
+                                  .withValues(alpha: 0.12),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 6,
+                          ),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20),
                           ),
@@ -129,7 +141,8 @@ class AlertsScreen extends StatelessWidget {
                             // WHO Teams Card
                             Expanded(
                               child: Obx(() {
-                                final count = resourceController.whoTeamsAvailable.value;
+                                final count =
+                                    resourceController.whoTeamsAvailable.value;
                                 Color color;
                                 String warningText = '';
                                 if (count == 0) {
@@ -155,7 +168,9 @@ class AlertsScreen extends StatelessWidget {
                             // Labs Card
                             Expanded(
                               child: Obx(() {
-                                final count = resourceController.labNetworksAvailable.value;
+                                final count = resourceController
+                                    .labNetworksAvailable
+                                    .value;
                                 Color color;
                                 String warningText = '';
                                 if (count == 0) {
@@ -181,7 +196,9 @@ class AlertsScreen extends StatelessWidget {
                             // Travel Alerts Card
                             Expanded(
                               child: Obx(() {
-                                final count = resourceController.travelAlertsAvailable.value;
+                                final count = resourceController
+                                    .travelAlertsAvailable
+                                    .value;
                                 Color color;
                                 String warningText = '';
                                 if (count == 0) {
@@ -219,7 +236,12 @@ class AlertsScreen extends StatelessWidget {
                         SizedBox(height: w * 0.02),
                         ...List.generate(assignments.length, (index) {
                           final assignment = assignments[index];
-                          return _buildPriorityAssignmentRow(context, w, assignment, index);
+                          return _buildPriorityAssignmentRow(
+                            context,
+                            w,
+                            assignment,
+                            index,
+                          );
                         }),
 
                         SizedBox(height: w * 0.05),
@@ -238,7 +260,7 @@ class AlertsScreen extends StatelessWidget {
                         ...List.generate(historyList.length, (index) {
                           final alert = historyList[index];
                           final score = alert.threatScore.combinedThreatIndex;
-                          final isCritical = score >= 75 || alert.threatScore.esm2Score >= 61;
+                          final isCritical = score > 75;
                           final color = isCritical
                               ? const Color(0xFFFF4444)
                               : (score >= 50
@@ -246,111 +268,113 @@ class AlertsScreen extends StatelessWidget {
                                     : const Color(0xFF00FF88));
 
                           return GestureDetector(
-                            onTap: () {
-                              Get.to(() => AlertDetailsPage(alert: alert));
-                            },
-                            child: Container(
-                              margin: EdgeInsets.only(bottom: w * 0.03),
-                              padding: EdgeInsets.symmetric(
-                                horizontal: w * 0.04,
-                                vertical: w * 0.02,
-                              ),
-                              decoration: BoxDecoration(
-                                color: AppTheme.cardSurface.withValues(
-                                  alpha: 0.9,
-                                ),
-                                borderRadius: BorderRadius.circular(16),
-                                border: Border.all(
-                                  color: color.withValues(alpha: 0.35),
-                                  width: 1.5,
-                                ),
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  // 1. Header row
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                onTap: () {
+                                  Get.to(() => AlertDetailsPage(alert: alert));
+                                },
+                                child: Container(
+                                  margin: EdgeInsets.only(bottom: w * 0.03),
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: w * 0.04,
+                                    vertical: w * 0.02,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: AppTheme.cardSurface.withValues(
+                                      alpha: 0.9,
+                                    ),
+                                    borderRadius: BorderRadius.circular(16),
+                                    border: Border.all(
+                                      color: color.withValues(alpha: 0.35),
+                                      width: 1.5,
+                                    ),
+                                  ),
+                                  child: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              alert.name,
-                                              style: GoogleFonts.outfit(
-                                                color: AppTheme.primaryText,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: w * 0.04,
-                                              ),
+                                      // 1. Header row
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  alert.name,
+                                                  style: GoogleFonts.outfit(
+                                                    color: AppTheme.primaryText,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: w * 0.04,
+                                                  ),
+                                                ),
+                                                SizedBox(height: w * 0.005),
+                                                Text(
+                                                  '${alert.originLocation} · ${DateFormat('MMM dd yyyy').format(alert.detectionDate)}',
+                                                  style: GoogleFonts.outfit(
+                                                    color:
+                                                        AppTheme.secondaryText,
+                                                    fontSize: w * 0.03,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                ),
+                                              ],
                                             ),
-                                            SizedBox(height: w * 0.005),
-                                            Text(
-                                              '${alert.originLocation} · ${DateFormat('MMM dd yyyy').format(alert.detectionDate)}',
-                                              style: GoogleFonts.outfit(
-                                                color: AppTheme.secondaryText,
-                                                fontSize: w * 0.03,
-                                                fontWeight: FontWeight.w500,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      RichText(
-                                        text: TextSpan(
-                                          text: '$score',
-                                          style: GoogleFonts.outfit(
-                                            color: color,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: w * 0.05,
                                           ),
-                                          children: [
-                                            TextSpan(
-                                              text: '/100',
+                                          RichText(
+                                            text: TextSpan(
+                                              text: '$score',
                                               style: GoogleFonts.outfit(
-                                                color: AppTheme.primaryText
-                                                    .withValues(alpha: 0.7),
-                                                fontWeight: FontWeight.w500,
-                                                fontSize: w * 0.035,
+                                                color: color,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: w * 0.05,
                                               ),
+                                              children: [
+                                                TextSpan(
+                                                  text: '/100',
+                                                  style: GoogleFonts.outfit(
+                                                    color: AppTheme.primaryText
+                                                        .withValues(alpha: 0.7),
+                                                    fontWeight: FontWeight.w500,
+                                                    fontSize: w * 0.035,
+                                                  ),
+                                                ),
+                                              ],
                                             ),
-                                          ],
-                                        ),
+                                          ),
+                                        ],
                                       ),
+
+                                      // 2. Metrics (Progress bars) - only for Critical or Monitor
+                                      if (score >= 50) ...[
+                                        SizedBox(height: w * 0.02),
+                                        _buildMetricRow(
+                                          w,
+                                          label: 'K-mer',
+                                          value: alert.threatScore.kmerScore,
+                                          color: AppTheme.infoBlue,
+                                        ),
+                                        SizedBox(height: w * 0.01),
+                                        _buildMetricRow(
+                                          w,
+                                          label: 'ESM-2',
+                                          value: alert.threatScore.esm2Score,
+                                          color: color,
+                                        ),
+                                      ],
+
+                                      SizedBox(height: w * 0.02),
+                                      _buildStatusBadge(w, alert, score),
                                     ],
                                   ),
-
-                                  // 2. Metrics (Progress bars) - only for Critical or Monitor
-                                  if (score >= 50 || alert.threatScore.esm2Score >= 61) ...[
-                                    SizedBox(height: w * 0.02),
-                                    _buildMetricRow(
-                                      w,
-                                      label: 'K-mer',
-                                      value: alert.threatScore.kmerScore,
-                                      color: AppTheme.infoBlue,
-                                    ),
-                                    SizedBox(height: w * 0.01),
-                                    _buildMetricRow(
-                                      w,
-                                      label: 'ESM-2',
-                                      value: alert.threatScore.esm2Score,
-                                      color: color,
-                                    ),
-                                  ],
-
-                                  SizedBox(height: w * 0.02),
-                                  _buildStatusBadge(w, alert, score),
-                                ],
-                              ),
-                            ),
-                          )
-                          .animate()
-                          .fade(delay: Duration(milliseconds: 100 * index))
-                          .slideY(begin: 0.1);
+                                ),
+                              )
+                              .animate()
+                              .fade(delay: Duration(milliseconds: 100 * index))
+                              .slideY(begin: 0.1);
                         }),
                       ],
                     ),
@@ -373,17 +397,11 @@ class AlertsScreen extends StatelessWidget {
     required String warningText,
   }) {
     return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: w * 0.025,
-        vertical: w * 0.025,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: w * 0.025, vertical: w * 0.025),
       decoration: BoxDecoration(
         color: AppTheme.cardSurface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: AppTheme.cardBorder,
-          width: 1.2,
-        ),
+        border: Border.all(color: AppTheme.cardBorder, width: 1.2),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -444,10 +462,7 @@ class AlertsScreen extends StatelessWidget {
           ),
         ),
       ),
-      padding: EdgeInsets.symmetric(
-        horizontal: w * 0.04,
-        vertical: w * 0.035,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: w * 0.04, vertical: w * 0.035),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -498,7 +513,9 @@ class AlertsScreen extends StatelessWidget {
                       colorText: Colors.white,
                       icon: const Icon(Icons.queue, color: Color(0xFF8892A0)),
                       borderWidth: 1,
-                      borderColor: const Color(0xFF8892A0).withValues(alpha: 0.3),
+                      borderColor: const Color(
+                        0xFF8892A0,
+                      ).withValues(alpha: 0.3),
                       margin: const EdgeInsets.all(16),
                       borderRadius: 12,
                     );
@@ -520,9 +537,14 @@ class AlertsScreen extends StatelessWidget {
                       snackPosition: SnackPosition.BOTTOM,
                       backgroundColor: const Color(0xFF131826),
                       colorText: Colors.white,
-                      icon: const Icon(Icons.call_split, color: Color(0xFFFFA500)),
+                      icon: const Icon(
+                        Icons.call_split,
+                        color: Color(0xFFFFA500),
+                      ),
                       borderWidth: 1,
-                      borderColor: const Color(0xFFFFA500).withValues(alpha: 0.3),
+                      borderColor: const Color(
+                        0xFFFFA500,
+                      ).withValues(alpha: 0.3),
                       margin: const EdgeInsets.all(16),
                       borderRadius: 12,
                     );
@@ -544,9 +566,14 @@ class AlertsScreen extends StatelessWidget {
                       snackPosition: SnackPosition.BOTTOM,
                       backgroundColor: const Color(0xFF131826),
                       colorText: Colors.white,
-                      icon: const Icon(Icons.campaign, color: Color(0xFFFF4444)),
+                      icon: const Icon(
+                        Icons.campaign,
+                        color: Color(0xFFFF4444),
+                      ),
                       borderWidth: 1,
-                      borderColor: const Color(0xFFFF4444).withValues(alpha: 0.3),
+                      borderColor: const Color(
+                        0xFFFF4444,
+                      ).withValues(alpha: 0.3),
                       margin: const EdgeInsets.all(16),
                       borderRadius: 12,
                     );
@@ -571,9 +598,7 @@ class AlertsScreen extends StatelessWidget {
       style: OutlinedButton.styleFrom(
         foregroundColor: textColor,
         side: const BorderSide(color: Colors.white, width: 1.2),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         padding: EdgeInsets.symmetric(vertical: w * 0.025),
         backgroundColor: Colors.white.withValues(alpha: 0.05),
       ),
@@ -595,7 +620,7 @@ class AlertsScreen extends StatelessWidget {
     int index,
   ) {
     final score = assignment.threatScore.toInt();
-    
+
     // Threat colors and badge text
     Color threatColor;
     String badgeText;
@@ -639,11 +664,17 @@ class AlertsScreen extends StatelessWidget {
     } else {
       // ACTIVE
       if (score > 75) {
-        final who = assignment.assignedWHO != 'None' ? assignment.assignedWHO : 'WHO Team A';
-        final lab = assignment.assignedLab != 'None' ? assignment.assignedLab : 'Lab Network 1';
+        final who = assignment.assignedWHO != 'None'
+            ? assignment.assignedWHO
+            : 'WHO Team A';
+        final lab = assignment.assignedLab != 'None'
+            ? assignment.assignedLab
+            : 'Lab Network 1';
         resourceText = '$who assigned • $lab • Travel Alert issued';
       } else if (score >= 50) {
-        final lab = assignment.assignedLab != 'None' ? assignment.assignedLab : 'Lab Network 1';
+        final lab = assignment.assignedLab != 'None'
+            ? assignment.assignedLab
+            : 'Lab Network 1';
         resourceText = '$lab assigned • Lab monitoring active';
       } else {
         resourceText = 'Watchlist active • Monitoring only';
@@ -660,10 +691,7 @@ class AlertsScreen extends StatelessWidget {
         decoration: BoxDecoration(
           color: AppTheme.cardSurface,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: AppTheme.cardBorder,
-            width: 1.2,
-          ),
+          border: Border.all(color: AppTheme.cardBorder, width: 1.2),
         ),
         clipBehavior: Clip.antiAlias,
         child: IntrinsicHeight(
@@ -671,10 +699,7 @@ class AlertsScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               // Subtle left border color accent matching threat level color
-              Container(
-                width: 5,
-                color: threatColor,
-              ),
+              Container(width: 5, color: threatColor),
 
               // Row content
               Expanded(
@@ -699,7 +724,10 @@ class AlertsScreen extends StatelessWidget {
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 color: threatColor.withValues(alpha: 0.12),
-                                border: Border.all(color: threatColor, width: 2),
+                                border: Border.all(
+                                  color: threatColor,
+                                  width: 2,
+                                ),
                               ),
                               alignment: Alignment.center,
                               child: Text(
@@ -759,7 +787,11 @@ class AlertsScreen extends StatelessWidget {
                       SizedBox(width: w * 0.02),
 
                       // RIGHT: Status chip with pulsing/warning animations (Fix 3)
-                      _buildAnimatedStatusChip(w, assignment.status, statusColor),
+                      _buildAnimatedStatusChip(
+                        w,
+                        assignment.status,
+                        statusColor,
+                      ),
                     ],
                   ),
                 ),
@@ -768,9 +800,7 @@ class AlertsScreen extends StatelessWidget {
           ),
         ),
       ),
-    ).animate()
-     .fade(delay: Duration(milliseconds: 50 * index))
-     .slideY(begin: 0.05);
+    ).animate().fade(delay: Duration(milliseconds: 50 * index)).slideY(begin: 0.05);
   }
 
   Widget _buildAnimatedStatusChip(double w, String status, Color statusColor) {
@@ -798,10 +828,7 @@ class AlertsScreen extends StatelessWidget {
     );
 
     final Widget container = Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: w * 0.025,
-        vertical: w * 0.008,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: w * 0.025, vertical: w * 0.008),
       decoration: BoxDecoration(
         color: statusColor.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(20),
@@ -814,13 +841,16 @@ class AlertsScreen extends StatelessWidget {
     );
 
     if (status == 'QUEUED') {
-      return container.animate(onPlay: (c) => c.repeat(reverse: true))
+      return container
+          .animate(onPlay: (c) => c.repeat(reverse: true))
           .fade(begin: 0.5, end: 1.0, duration: 1200.ms);
     } else if (status == 'SPLIT') {
-      return container.animate(onPlay: (c) => c.repeat(reverse: true))
+      return container
+          .animate(onPlay: (c) => c.repeat(reverse: true))
           .fade(begin: 0.5, end: 1.0, duration: 1200.ms);
     } else if (status == 'ESCALATED') {
-      return container.animate(onPlay: (c) => c.repeat(reverse: true))
+      return container
+          .animate(onPlay: (c) => c.repeat(reverse: true))
           .fade(begin: 0.3, end: 1.0, duration: 500.ms);
     } else {
       return container;
@@ -877,7 +907,7 @@ class AlertsScreen extends StatelessWidget {
     String text = '';
     Color color = Colors.transparent;
 
-    final isCritical = score >= 75 || alert.threatScore.esm2Score >= 61;
+    final isCritical = score > 75;
     if (isCritical) {
       final alertId = alert.alert?.alertId ?? 'PW-2019-001';
       text = 'ALERT DISPATCHED · $alertId';

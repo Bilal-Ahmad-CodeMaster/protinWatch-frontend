@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
+import '../widgets/highlighted_brief_text.dart';
 
 class AlertDetailsPage extends StatelessWidget {
   final SequenceModel alert;
@@ -18,6 +19,13 @@ class AlertDetailsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final w = MediaQuery.sizeOf(context).width;
+    // Filter out action-related steps that belong only in ActionPanelWidget
+    final filteredAgentTrace = alert.agentTrace.where((step) {
+      final a = step.agent.toLowerCase();
+      final act = step.action.toLowerCase();
+      return !a.contains('who notif') && !a.contains('travel advis') && !a.contains('labs shared') &&
+             !act.contains('who notif') && !act.contains('travel advis') && !act.contains('labs shared');
+    }).toList();
     return Scaffold(
       backgroundColor: AppTheme.background,
       appBar: AppBar(
@@ -240,13 +248,9 @@ class AlertDetailsPage extends StatelessWidget {
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(color: AppTheme.cardBorder, width: 1.5),
                         ),
-                        child: Text(
-                          controller.briefText.value,
-                          style: GoogleFonts.outfit(
-                            color: AppTheme.primaryText,
-                            fontSize: w * 0.035,
-                            height: 1.5,
-                          ),
+                        child: HighlightedBriefText(
+                          text: controller.briefText.value,
+                          w: w,
                         ),
                       ).animate().fade().slideY(begin: 0.1),
                     if (!hasBrief && !isStreaming)
@@ -315,7 +319,7 @@ class AlertDetailsPage extends StatelessWidget {
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Text(
-                        '${alert.agentTrace.length}',
+                        '${filteredAgentTrace.length}',
                         style: GoogleFonts.outfit(
                           color: AppTheme.infoBlue,
                           fontSize: 12,
@@ -329,7 +333,7 @@ class AlertDetailsPage extends StatelessWidget {
                 iconColor: AppTheme.secondaryText,
                 collapsedIconColor: AppTheme.secondaryText,
                 children: [
-                  if (alert.agentTrace.isEmpty)
+                  if (filteredAgentTrace.isEmpty)
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 16.0),
                       child: Center(
@@ -340,10 +344,9 @@ class AlertDetailsPage extends StatelessWidget {
                       ),
                     )
                   else ...[
-                    ...List.generate(alert.agentTrace.length, (index) {
-                      final step = alert.agentTrace[index];
-                      // Force isLast to false because we are appending 3 more steps
-                      final isLast = false;
+                    ...List.generate(filteredAgentTrace.length, (index) {
+                      final step = filteredAgentTrace[index];
+                      final isLast = index == filteredAgentTrace.length - 1;
                       final stepNum = index + 1;
                       final durationMock = (1.0 + (index * 0.1)).toStringAsFixed(1) + 's';
                       final bgColor = const Color(0xFF0A0E17);
@@ -462,33 +465,6 @@ class AlertDetailsPage extends StatelessWidget {
                         ),
                       );
                     }),
-                    _buildTraceActionCard(
-                      stepNum: alert.agentTrace.length + 1,
-                      isLast: false,
-                      icon: Icons.local_hospital,
-                      iconColor: Colors.greenAccent,
-                      title: 'WHO Notified',
-                      description: 'Alert dispatched to WHO and regional health authorities',
-                      timestamp: 'Just now',
-                    ),
-                    _buildTraceActionCard(
-                      stepNum: alert.agentTrace.length + 2,
-                      isLast: false,
-                      icon: Icons.flight_takeoff,
-                      iconColor: Colors.orangeAccent,
-                      title: 'Travel Advisory',
-                      description: 'Travel advisory protocols initiated for the region',
-                      timestamp: '2 mins ago',
-                    ),
-                    _buildTraceActionCard(
-                      stepNum: alert.agentTrace.length + 3,
-                      isLast: true,
-                      icon: Icons.science,
-                      iconColor: Colors.lightBlueAccent,
-                      title: 'Labs Shared',
-                      description: 'Sequence data shared with global research laboratories',
-                      timestamp: '5 mins ago',
-                    ),
                   ],
                 ],
               ),
@@ -506,7 +482,7 @@ class AlertDetailsPage extends StatelessWidget {
             ),
             SizedBox(height: w * 0.015),
             ActionPanelWidget(
-              isActive: alert.threatScore.combinedThreatIndex >= 75 || alert.threatScore.esm2Score >= 61,
+              isActive: true, // Always active on detail page — action protocol always visible
               alertId: alert.id,
               threatIndex: alert.threatScore.combinedThreatIndex,
               kmerScore: alert.threatScore.kmerScore,
