@@ -8,6 +8,7 @@ import 'app/controllers/threat_controller.dart';
 import 'app/controllers/brief_controller.dart';
 import 'app/controllers/map_controller.dart';
 import 'app/controllers/replay_controller.dart';
+import 'app/controllers/resource_controller.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,6 +29,7 @@ class InitialBindings extends Bindings {
     Get.lazyPut(() => BriefController());
     Get.lazyPut(() => MapController());
     Get.lazyPut(() => ReplayController());
+    Get.lazyPut(() => ResourceController());
   }
 }
 
