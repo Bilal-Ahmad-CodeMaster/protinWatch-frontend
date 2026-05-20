@@ -148,31 +148,38 @@ class AlertDetailsPage extends StatelessWidget {
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(18),
-                child: alert.pdbStructure.isNotEmpty
-                    ? ProteinViewer(pdbData: alert.pdbStructure)
-                    : FutureBuilder<String>(
-                        future: Get.find<ApiService>().getStructure('P0DTC2'),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const Center(
-                              child: CircularProgressIndicator(
-                                color: AppTheme.infoBlue,
-                              ),
-                            );
-                          }
-                          final data = snapshot.data ?? '';
-                          if (data.isEmpty) {
-                            return const Center(
-                              child: Text(
-                                'No 3D structure data available',
-                                style: TextStyle(color: AppTheme.secondaryText),
-                              ),
-                            );
-                          }
-                          return ProteinViewer(pdbData: data);
-                        },
-                      ),
+                child: () {
+                  final String pdbStr = alert.pdbStructure;
+                  final bool isFullPdb = pdbStr.length > 100 && (pdbStr.contains('ATOM') || pdbStr.contains('HEADER'));
+                  if (isFullPdb) {
+                    return ProteinViewer(pdbData: pdbStr);
+                  }
+                  
+                  final String requestParam = (pdbStr.isNotEmpty && pdbStr.length < 20) ? pdbStr : alert.id;
+                  
+                  return FutureBuilder<String>(
+                    future: Get.find<ApiService>().getStructure(requestParam),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(
+                          child: CircularProgressIndicator(
+                            color: AppTheme.infoBlue,
+                          ),
+                        );
+                      }
+                      final data = snapshot.data ?? '';
+                      if (data.isEmpty) {
+                        return const Center(
+                          child: Text(
+                            'No 3D structure data available',
+                            style: TextStyle(color: AppTheme.secondaryText),
+                          ),
+                        );
+                      }
+                      return ProteinViewer(pdbData: data);
+                    },
+                  );
+                }(),
               ),
             ).animate().fade().scale(),
 

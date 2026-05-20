@@ -31,13 +31,17 @@ class ActionPanelHeader extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  Text(
-                    alertId,
-                    style: GoogleFonts.outfit(
-                      color: AppTheme.primaryText,
-                      fontSize: w * 0.045,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 0.5,
+                  Flexible(
+                    child: Text(
+                      alertId,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.outfit(
+                        color: AppTheme.primaryText,
+                        fontSize: w * 0.045,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 0.5,
+                      ),
                     ),
                   ),
                   SizedBox(width: w * 0.03),
@@ -64,7 +68,8 @@ class ActionPanelHeader extends StatelessWidget {
                         ),
                         children: [
                           TextSpan(
-                            text: '  •  ${sequenceName ?? "Spike protein novel sequence"}  •  ${uniprotId ?? "UniProt P0DTC2"}',
+                            text:
+                                '  •  ${sequenceName ?? "Spike protein novel sequence"}  •  ${uniprotId ?? "UniProt P0DTC2"}',
                             style: GoogleFonts.outfit(
                               color: AppTheme.secondaryText,
                               fontWeight: FontWeight.w400,
