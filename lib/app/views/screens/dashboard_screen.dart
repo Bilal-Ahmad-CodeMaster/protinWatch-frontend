@@ -313,7 +313,7 @@ class DashboardScreen extends StatelessWidget {
                     ).animate(onPlay: (c) => c.repeat(reverse: true)).fade(),
                     const SizedBox(width: 6),
                     Text(
-                      'NCBI · 6h cycle',
+                      'NCBI · 30m cycle',
                       style: GoogleFonts.outfit(
                         color: AppTheme.safeGreen,
                         fontSize: w * 0.03,
