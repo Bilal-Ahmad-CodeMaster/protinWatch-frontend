@@ -5,12 +5,12 @@ import 'sequence_controller.dart';
 class ResourceAssignment {
   final String virusName;
   final double threatScore;
-  final String assignedWHO;      // 'WHO Team A' or 'QUEUED' or 'ESCALATED' or 'None'
+  final String assignedWHO; // 'WHO Team A' or 'QUEUED' or 'ESCALATED' or 'None'
   final String assignedLab;
   final String travelStatus;
-  final String status;           // 'ACTIVE', 'QUEUED', 'ESCALATED', 'CONFLICT', 'SPLIT'
+  final String status; // 'ACTIVE', 'QUEUED', 'ESCALATED', 'CONFLICT', 'SPLIT'
   final DateTime assignedAt;
-  final List<String> actionLog;  // agent trace entries
+  final List<String> actionLog; // agent trace entries
   final SequenceModel sequence;
 
   ResourceAssignment({
@@ -102,8 +102,9 @@ class ResourceController extends GetxController {
     final Map<String, SequenceModel> uniqueSequences = {};
     for (var sequence in list) {
       final existing = uniqueSequences[sequence.name];
-      if (existing == null || 
-          sequence.threatScore.combinedThreatIndex > existing.threatScore.combinedThreatIndex) {
+      if (existing == null ||
+          sequence.threatScore.combinedThreatIndex >
+              existing.threatScore.combinedThreatIndex) {
         uniqueSequences[sequence.name] = sequence;
       }
     }
@@ -111,13 +112,17 @@ class ResourceController extends GetxController {
     print('Filtered history count: ${deduplicatedList.length}');
 
     // Sort by threat index descending
-    deduplicatedList.sort((a, b) => b.threatScore.combinedThreatIndex.compareTo(a.threatScore.combinedThreatIndex));
+    deduplicatedList.sort(
+      (a, b) => b.threatScore.combinedThreatIndex.compareTo(
+        a.threatScore.combinedThreatIndex,
+      ),
+    );
 
     final List<ResourceAssignment> newAssignments = [];
 
     for (var sequence in deduplicatedList) {
       final score = sequence.threatScore.combinedThreatIndex.toDouble();
-      
+
       String assignedWHO = 'None';
       String assignedLab = 'None';
       String travelStatus = 'None';
@@ -127,7 +132,8 @@ class ResourceController extends GetxController {
       if (score > 75) {
         // Allocate WHO Team
         if (whoTeamsAvailable.value > 0) {
-          assignedWHO = 'WHO Team ${String.fromCharCode(65 + (3 - whoTeamsAvailable.value))}'; // WHO Team A, B, C
+          assignedWHO =
+              'WHO Team ${String.fromCharCode(65 + (3 - whoTeamsAvailable.value))}'; // WHO Team A, B, C
           whoTeamsAvailable.value--;
         } else {
           assignedWHO = 'QUEUED';
@@ -150,7 +156,9 @@ class ResourceController extends GetxController {
           travelStatus = 'QUEUED';
         }
 
-        actionLog.add('Auto-assigned critical response resources at ${_formatUtc(DateTime.now())}');
+        actionLog.add(
+          'Auto-assigned critical response resources at ${_formatUtc(DateTime.now())}',
+        );
       } else if (score >= 50) {
         // Allocate Lab only
         if (labNetworksAvailable.value > 0) {
@@ -159,24 +167,30 @@ class ResourceController extends GetxController {
         } else {
           assignedLab = 'QUEUED';
         }
-        actionLog.add('Auto-assigned lab monitoring resources at ${_formatUtc(DateTime.now())}');
+        actionLog.add(
+          'Auto-assigned lab monitoring resources at ${_formatUtc(DateTime.now())}',
+        );
       } else {
         // 'Monitoring only'
         status = 'ACTIVE';
-        actionLog.add('Watchlist registration at ${_formatUtc(DateTime.now())}');
+        actionLog.add(
+          'Watchlist registration at ${_formatUtc(DateTime.now())}',
+        );
       }
 
-      newAssignments.add(ResourceAssignment(
-        virusName: sequence.name,
-        threatScore: score,
-        assignedWHO: assignedWHO,
-        assignedLab: assignedLab,
-        travelStatus: travelStatus,
-        status: status,
-        assignedAt: DateTime.now(),
-        actionLog: actionLog,
-        sequence: sequence,
-      ));
+      newAssignments.add(
+        ResourceAssignment(
+          virusName: sequence.name,
+          threatScore: score,
+          assignedWHO: assignedWHO,
+          assignedLab: assignedLab,
+          travelStatus: travelStatus,
+          status: status,
+          assignedAt: DateTime.now(),
+          actionLog: actionLog,
+          sequence: sequence,
+        ),
+      );
     }
 
     assignments.value = newAssignments;
@@ -199,7 +213,10 @@ class ResourceController extends GetxController {
     if (index != -1) {
       assignments[index] = assignments[index].copyWith(
         status: 'QUEUED',
-        actionLog: [...assignments[index].actionLog, 'Queued at ${_formatUtc(DateTime.now())}'],
+        actionLog: [
+          ...assignments[index].actionLog,
+          'Queued at ${_formatUtc(DateTime.now())}',
+        ],
       );
       assignments.refresh();
     }
@@ -211,7 +228,10 @@ class ResourceController extends GetxController {
       assignments[index] = assignments[index].copyWith(
         status: 'SPLIT',
         assignedWHO: 'Partial Team',
-        actionLog: [...assignments[index].actionLog, 'Split resources at ${_formatUtc(DateTime.now())}'],
+        actionLog: [
+          ...assignments[index].actionLog,
+          'Split resources at ${_formatUtc(DateTime.now())}',
+        ],
       );
       assignments.refresh();
     }
@@ -222,14 +242,19 @@ class ResourceController extends GetxController {
     if (index != -1) {
       assignments[index] = assignments[index].copyWith(
         status: 'ESCALATED',
-        actionLog: [...assignments[index].actionLog, 'Escalated to WHO HQ at ${_formatUtc(DateTime.now())}'],
+        actionLog: [
+          ...assignments[index].actionLog,
+          'Escalated to WHO HQ at ${_formatUtc(DateTime.now())}',
+        ],
       );
       assignments.refresh();
     }
   }
 
   String? getFirstQueuedThreatName() {
-    final firstQueued = assignments.firstWhereOrNull((a) => a.status == 'QUEUED');
+    final firstQueued = assignments.firstWhereOrNull(
+      (a) => a.status == 'QUEUED',
+    );
     return firstQueued?.virusName;
   }
 
@@ -245,7 +270,9 @@ class ResourceController extends GetxController {
       }
 
       // Check if there are any remaining queued critical threats
-      final remainingQueuedCritical = assignments.any((a) => a.threatScore > 75 && a.status == 'QUEUED');
+      final remainingQueuedCritical = assignments.any(
+        (a) => a.threatScore > 75 && a.status == 'QUEUED',
+      );
       if (!remainingQueuedCritical) {
         hasConflict.value = false;
       }
@@ -258,7 +285,7 @@ class ResourceController extends GetxController {
       // Activate Demo:
       // Sets whoTeamsAvailable to 0
       whoTeamsAvailable.value = 0;
-      
+
       // Create a dummy critical sequence:
       final SequenceModel dummySequence;
       if (_lastSequences.isNotEmpty) {
@@ -306,7 +333,7 @@ class ResourceController extends GetxController {
           pdbStructure: '',
         );
       }
-      
+
       final fakeAssignment = ResourceAssignment(
         virusName: 'Novel-H7N2',
         threatScore: 89.0,
@@ -315,13 +342,15 @@ class ResourceController extends GetxController {
         travelStatus: 'Alert Level 1',
         status: 'QUEUED',
         assignedAt: DateTime.now(),
-        actionLog: ['Simulated Critical threat initiated at ${_formatUtc(DateTime.now())}'],
+        actionLog: [
+          'Simulated Critical threat initiated at ${_formatUtc(DateTime.now())}',
+        ],
         sequence: dummySequence,
       );
 
       // Insert fake critical threat at the top of assignments queue
       assignments.insert(0, fakeAssignment);
-      
+
       // Trigger hasConflict = true
       hasConflict.value = true;
     } else {
