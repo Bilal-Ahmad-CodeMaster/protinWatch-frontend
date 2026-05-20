@@ -54,6 +54,7 @@ class SequenceController extends GetxController {
     
     try {
       final result = await _api.analyzeSequence(sequence);
+      print('--- DEBUG: Trace list length after /analyze: ${result.agentTrace.length} ---');
       selectedSequence.value = result;
       // Refresh health stats after analysis is done
       await fetchHealthStatus();

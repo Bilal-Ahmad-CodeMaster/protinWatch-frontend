@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import '../services/api_service.dart';
 import 'sequence_controller.dart';
+import '../models/sequence_model.dart';
 
 class SeparatorMatch {
   final int index;
@@ -142,6 +143,58 @@ class BriefController extends GetxController {
     } finally {
       isStreaming.value = false;
     }
+  }
+
+  Future<void> fetchBriefForAlert(SequenceModel alert) async {
+    isStreaming.value = true;
+    briefText.value = '';
+
+    try {
+      String accumulated = '';
+      
+      final String fallbackSequence = "MFVFLVLLPLVSSQCVNLTTRTQLPPAYTNSFTRGVYYPDKVFRSSVLHSTQDLFLPFFSNVTWFHAIHVSGTNGTKRFDNPVLPFNDGVYFASTEKSNIIRGWIFGTTLDSKTQSLLIVNNATNVVIKVCEFQFCNDPFLGVYYHKNNKSWMESEFRVYSSANNCTFEYVSQPFLMDLEGKQGNFKNLREFVFKNIDGYFKIYSKHTPINLVRDLPQGFSALEPLVDLPIGINITRFQTLLALHRSYLTPGDSSSGWTAGAAAYYVGYLQPRTFLLKYNENGTITDAVDCALDPLSETKCTLKSFTVEKGIYQTSNFRVQPTESIVRFPNITNLCPFGEVFNATRFASVYAWNRKRISNCVADYSVLYNSASFSTFKCYGVSPTKLNDLCFTNVYADSFVIRGDEVRQIAPGQTGKIADYNYKLPDDFTGCVIAWNSNNLDSKVGGNYNYLYRLFRKSNLKPFERDISTEIYQAGSTPCNGVEGFNCYFPLQSYGFQPTNGVGYQPYRVVVLSFELLHAPATVCGPKKSTNLVKNKCVNFNFNGLTGTGVLTESNKKFLPFQQFGRDIADTTDAVRDPQTLEILDITPCSFGGVSVITPGTNTSNQVAVLYQDVNCTEVPVAIHADQLTPTWRVYSTGSNVFQTRAGCLIGAEHVNNSYECDIPIGAGICASYQTQTNSPRRARSVASQSIIAYTMSLGAENSVAYSNNSIAIPTNFTISVTTEILPVSMTKTSVDCTMYICGDSTECSNLLLQYGSFCTQLNRALTGIAVEQDKNTQEVFAQVKQIYKTPPIKDFGGFNFSQILPDPSKPSKRSFIEDLLFNKVTLADAGFIKQYGDCLGDIAARDLICAQKFNGLTVLPPLLTDEMIAQYTSALLAGTITSGWTFGAGAALQIPFAMQMAYRFNGIGVTQNVLYENQKLIANQFNSAIGKIQDSLSSTASALGKLQDVVNQNAQALNTLVKQLSSNFGAISSVLNDILSRLDKVEAEVQIDRLITGRLQSLQTYVTQQLIRAAEIRASANLAATKMSECVLGQSKRVDFCGKGYHLMSFPQSAPHGVVFLHVTYVPAQEKNFTTAPAICHDGKAHFPREGVFVSNGTHWFVTQRNFYEPQIITTDNTFVSGNCDVVIGIVNNTVYDPLQPELDSFKEELDKYFKNHTSPDVDLGDISGINASVVNIQKEIDRLNEVAKNLNESLIDLQELGKYEQYIKWPWYIWLGFIAGLIAIVMVTIMLCCMTSCCSCLKGCCSCGSCCKFDEDDSEPVLKGVKLHYT";
+      final seqStr = alert.sequenceString.isNotEmpty ? alert.sequenceString : fallbackSequence;
+
+      final stream = _api.streamBrief(
+        sequence: seqStr,
+        threatIndex: alert.threatScore.combinedThreatIndex.toDouble(),
+        kmer: alert.threatScore.kmerScore.toDouble(),
+        esm: alert.threatScore.esm2Score.toDouble(),
+        language: language.value,
+      );
+
+      await for (final chunk in stream) {
+        accumulated += chunk;
+
+        final match = _findUrduSeparator(accumulated);
+        if (match != null) {
+          if (language.value == 'ur') {
+            briefText.value = accumulated.substring(match.index + match.length).trim();
+          } else {
+            final rawEn = accumulated.substring(0, match.index).trim();
+            briefText.value = _cleanEnglishPrefix(rawEn);
+          }
+        } else {
+          if (language.value == 'en') {
+            briefText.value = _cleanEnglishPrefix(accumulated.trim());
+          } else {
+            briefText.value = 'Preparing translation...';
+          }
+        }
+      }
+    } catch (e) {
+      print('BriefController streaming error: $e');
+      briefText.value = language.value == 'ur'
+          ? 'تفصیلات حاصل کرنے میں دشواری پیش آئی۔'
+          : 'Failed to compile brief.';
+    } finally {
+      isStreaming.value = false;
+    }
+  }
+
+  void toggleLanguageForAlert(SequenceModel alert) {
+    language.value = language.value == 'en' ? 'ur' : 'en';
+    fetchBriefForAlert(alert);
   }
 
   void toggleLanguage(String sequenceId) {
