@@ -37,11 +37,24 @@ class SequenceController extends GetxController {
   }
 
   Future<void> _loadHistory() async {
+    print('DEBUG: SequenceController._loadHistory() called');
     try {
       final history = await _api.getHistory();
-      sequences.value = history;
-      if (history.isNotEmpty) {
-        selectedSequence.value = history.first;
+      
+      // Deduplicate by virus name keeping only highest score entry
+      final Map<String, SequenceModel> uniqueSequences = {};
+      for (var sequence in history) {
+        final existing = uniqueSequences[sequence.name];
+        if (existing == null || 
+            sequence.threatScore.combinedThreatIndex > existing.threatScore.combinedThreatIndex) {
+          uniqueSequences[sequence.name] = sequence;
+        }
+      }
+      final deduplicatedList = uniqueSequences.values.toList();
+
+      sequences.value = deduplicatedList;
+      if (deduplicatedList.isNotEmpty) {
+        selectedSequence.value = deduplicatedList.first;
       }
     } catch (e) {
       print('SequenceController error loading history: $e');

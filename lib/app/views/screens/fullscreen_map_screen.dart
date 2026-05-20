@@ -5,7 +5,8 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
-import '../../theme/app_theme.dart';
+import 'package:crio_app/app/theme/app_theme.dart';
+import '../../controllers/sequence_controller.dart';
 import '../../controllers/map_controller.dart' as custom_map;
 import '../../models/sequence_model.dart';
 
@@ -19,6 +20,7 @@ class FullscreenMapScreen extends StatefulWidget {
 class _FullscreenMapScreenState extends State<FullscreenMapScreen> {
   final custom_map.MapController _mapController =
       Get.find<custom_map.MapController>();
+  final SequenceController sequenceController = Get.find<SequenceController>();
 
   @override
   void initState() {
@@ -32,7 +34,7 @@ class _FullscreenMapScreenState extends State<FullscreenMapScreen> {
     super.dispose();
   }
 
-  Color _threatColor(int score, int esm2Score) => (score >= 75 || esm2Score >= 61)
+  Color _threatColor(int score, int esm2Score) => score > 75
       ? AppTheme.criticalRed
       : (score >= 50 ? AppTheme.warningAmber : AppTheme.safeGreen);
 
@@ -43,11 +45,11 @@ class _FullscreenMapScreenState extends State<FullscreenMapScreen> {
     return Scaffold(
       backgroundColor: AppTheme.background,
       body: Obx(() {
-        final sequences = _mapController.markers;
+        final sequences = sequenceController.sequences.isEmpty
+            ? custom_map.MapController.defaultMapMarkers
+            : sequenceController.sequences;
         final criticalCount = sequences
-            .where((s) =>
-                s.threatScore.combinedThreatIndex >= 75 ||
-                s.threatScore.esm2Score >= 61)
+            .where((s) => s.threatScore.combinedThreatIndex > 75)
             .length;
 
         return Stack(
@@ -343,7 +345,7 @@ class _FullscreenMapScreenState extends State<FullscreenMapScreen> {
     final score = seq.threatScore.combinedThreatIndex;
     final esm2 = seq.threatScore.esm2Score;
     final color = _threatColor(score, esm2);
-    final isCritical = score >= 75 || esm2 >= 61;
+    final isCritical = score > 75;
     final label = seq.name.split(' ').first;
 
     return Marker(

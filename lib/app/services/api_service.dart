@@ -108,6 +108,7 @@ class ApiService extends GetxService {
   }
 
   Future<List<SequenceModel>> getHistory({int? limit}) async {
+    print('DEBUG: ApiService.getHistory() called');
     try {
       final response = await _dio.get(
         '/history',

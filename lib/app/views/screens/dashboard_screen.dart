@@ -9,13 +9,14 @@ import '../../theme/app_theme.dart';
 import '../../models/sequence_model.dart';
 import '../../controllers/map_controller.dart' as custom_map;
 import 'fullscreen_map_screen.dart';
+import '../../controllers/sequence_controller.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
 
   Marker _buildMarker(BuildContext context, SequenceModel seq, double w) {
     final score = seq.threatScore.combinedThreatIndex;
-    final isCritical = score >= 75 || seq.threatScore.esm2Score >= 61;
+    final isCritical = score > 75;
     final color = isCritical
         ? AppTheme.criticalRed
         : (score >= 50 ? AppTheme.warningAmber : AppTheme.safeGreen);
@@ -114,7 +115,8 @@ class DashboardScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final w = MediaQuery.sizeOf(context).width;
     final h = MediaQuery.sizeOf(context).height;
-    final custom_map.MapController mapController = Get.find();
+    final SequenceController sequenceController =
+        Get.find<SequenceController>();
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -145,7 +147,9 @@ class DashboardScreen extends StatelessWidget {
                 children: [
                   // Map Widget
                   Obx(() {
-                    final sequences = mapController.markers;
+                    final sequences = sequenceController.sequences.isEmpty
+                        ? custom_map.MapController.defaultMapMarkers
+                        : sequenceController.sequences;
 
                     return FlutterMap(
                       options: const MapOptions(
@@ -191,12 +195,12 @@ class DashboardScreen extends StatelessWidget {
                         ],
                       ),
                       child: Obx(() {
-                        final list = mapController.markers;
+                        final list = sequenceController.sequences.isEmpty
+                            ? custom_map.MapController.defaultMapMarkers
+                            : sequenceController.sequences;
                         final count = list
                             .where(
-                              (s) =>
-                                  s.threatScore.combinedThreatIndex >= 75 ||
-                                  s.threatScore.esm2Score >= 61,
+                              (s) => s.threatScore.combinedThreatIndex > 75,
                             )
                             .length;
                         return Text(
@@ -325,7 +329,9 @@ class DashboardScreen extends StatelessWidget {
           // 3. Scrollable List of Signals
           Expanded(
             child: Obx(() {
-              final sequences = mapController.markers;
+              final sequences = sequenceController.sequences.isEmpty
+                  ? custom_map.MapController.defaultMapMarkers
+                  : sequenceController.sequences;
 
               return ListView.builder(
                 padding: EdgeInsets.only(
@@ -338,7 +344,7 @@ class DashboardScreen extends StatelessWidget {
                 itemBuilder: (context, index) {
                   final seq = sequences[index];
                   final score = seq.threatScore.combinedThreatIndex;
-                  final color = (score >= 75 || seq.threatScore.esm2Score >= 61)
+                  final color = score > 75
                       ? AppTheme.criticalRed
                       : (score >= 50
                             ? AppTheme.warningAmber

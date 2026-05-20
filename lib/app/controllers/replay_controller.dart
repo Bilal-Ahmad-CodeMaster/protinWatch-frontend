@@ -5,9 +5,10 @@ import 'threat_controller.dart';
 import 'brief_controller.dart';
 
 class ReplayController extends GetxController {
-  final SequenceController _sequenceController = Get.find<SequenceController>();
-  final ThreatController _threatController = Get.find<ThreatController>();
-  final BriefController _briefController = Get.find<BriefController>();
+  // Use lazy getters to prevent 'BriefController not found' crash when instantiated eager
+  SequenceController get _sequenceController => Get.find<SequenceController>();
+  ThreatController get _threatController => Get.find<ThreatController>();
+  BriefController get _briefController => Get.find<BriefController>();
 
   final RxBool replayActive = false.obs;
   final RxInt replayStep = 0.obs;
@@ -17,19 +18,32 @@ class ReplayController extends GetxController {
   final RxBool isPlaying = false.obs;
   final RxString geminiText = ''.obs;
   final RxInt geminiCharIndex = 0.obs;
+  
+  // Playback speed: 0.5, 1.0, or 2.0
+  final RxDouble playbackSpeed = 1.0.obs;
 
   Timer? _screenTimer;
 
   final String fullGeminiText =
       "URGENT PUBLIC HEALTH ALERT: Analysis of novel coronavirus sequence from Wuhan, China indicates highly unusual binding affinity to human ACE2 receptors. The structural prediction strongly suggests high transmissibility. Immediate containment measures are recommended.";
 
-  final DateTime startDate = DateTime(2019, 12, 1);
-  final DateTime endDate = DateTime(2020, 2, 1);
+  // timeline Dec 26, 2019 to Jan 30, 2020
+  final DateTime startDate = DateTime(2019, 12, 26);
+  final DateTime endDate = DateTime(2020, 1, 30);
 
   @override
   void onClose() {
     _screenTimer?.cancel();
     super.onClose();
+  }
+
+  void setSpeed(double speed) {
+    playbackSpeed.value = speed;
+    if (isPlaying.value) {
+      // Restart timer with new speed
+      togglePlay();
+      togglePlay();
+    }
   }
 
   void togglePlay() {
@@ -39,24 +53,18 @@ class ReplayController extends GetxController {
     } else {
       if (progress.value >= 1.0) reset();
       isPlaying.value = true;
+      
+      // Timer ticks every 100ms.
+      // Total timeline has 100 ticks at 1x speed (10s total).
+      // So at 1x speed, we add 0.01 progress per tick.
       _screenTimer = Timer.periodic(const Duration(milliseconds: 100), (timer) {
-        progress.value += 0.005;
+        progress.value += 0.01 * playbackSpeed.value;
         if (progress.value >= 1.0) {
           progress.value = 1.0;
           isPlaying.value = false;
           timer.cancel();
         }
-
-        if (progress.value >= 0.75) {
-          int charCount =
-              (((progress.value - 0.75) / 0.25) * fullGeminiText.length)
-                  .toInt();
-          if (charCount > fullGeminiText.length) {
-            charCount = fullGeminiText.length;
-          }
-          geminiText.value = fullGeminiText.substring(0, charCount);
-          geminiCharIndex.value = charCount;
-        }
+        _updateProgressState(progress.value);
       });
     }
   }
@@ -65,30 +73,34 @@ class ReplayController extends GetxController {
     _screenTimer?.cancel();
     progress.value = 1.0;
     isPlaying.value = false;
-    geminiText.value = fullGeminiText;
-    geminiCharIndex.value = fullGeminiText.length;
+    _updateProgressState(1.0);
   }
 
   void reset() {
     _screenTimer?.cancel();
     progress.value = 0.0;
     isPlaying.value = false;
-    geminiText.value = '';
-    geminiCharIndex.value = 0;
+    _updateProgressState(0.0);
   }
 
   void updateProgress(double value) {
     progress.value = value;
-    if (value < 0.75) {
+    _updateProgressState(value);
+  }
+
+  void _updateProgressState(double value) {
+    // Stage 3 (AI Brief) is between progress 0.50 and 0.70
+    if (value < 0.50) {
       geminiText.value = '';
       geminiCharIndex.value = 0;
-    } else {
-      int charCount = ((value - 0.75) / 0.25 * fullGeminiText.length).toInt();
-      if (charCount > fullGeminiText.length) {
-        charCount = fullGeminiText.length;
-      }
+    } else if (value >= 0.50 && value < 0.70) {
+      double stage3Fraction = ((value - 0.50) / 0.20).clamp(0.0, 1.0);
+      int charCount = (stage3Fraction * fullGeminiText.length).toInt();
       geminiText.value = fullGeminiText.substring(0, charCount);
       geminiCharIndex.value = charCount;
+    } else {
+      geminiText.value = fullGeminiText;
+      geminiCharIndex.value = fullGeminiText.length;
     }
   }
 
@@ -111,65 +123,13 @@ class ReplayController extends GetxController {
       'Nov',
       'Dec',
     ];
-    return "${months[current.month - 1]} ${current.day} ${current.year}";
+    return "${months[current.month - 1]} ${current.day}, ${current.year}";
   }
 
   Future<void> startCovidReplay() async {
-    if (replayActive.value) return;
-
-    replayActive.value = true;
-    replayStep.value = 0;
-
-    // We assume the offline COVID-19 sequence is selected or we select it
-    if (_sequenceController.sequences.isNotEmpty) {
-      _sequenceController.selectedSequence.value =
-          _sequenceController.sequences.first;
+    if (!isPlaying.value) {
+      reset();
+      togglePlay();
     }
-
-    final seq = _sequenceController.selectedSequence.value;
-    if (seq == null) {
-      replayActive.value = false;
-      return;
-    }
-
-    _sequenceController.currentLayer.value = 1; // Layer 1: NCBI ingestion
-    _threatController.updateStagedScores(0, 0, 0.0, 0); // reset
-
-    // Stage 1: 1.5s -> Layer 2 K-mer
-    await Future.delayed(const Duration(milliseconds: 1500));
-    _sequenceController.currentLayer.value = 2;
-    _threatController.updateStagedScores(seq.threatScore.kmerScore, 0, 0.0, 0);
-
-    // Stage 2: 3s -> Layer 3 ESM-2
-    await Future.delayed(const Duration(milliseconds: 1500));
-    _sequenceController.currentLayer.value = 3;
-    _threatController.updateStagedScores(
-      seq.threatScore.kmerScore,
-      seq.threatScore.esm2Score,
-      0.0,
-      0,
-    );
-
-    // Stage 3: 5s -> Layer 4 AlphaFold
-    await Future.delayed(const Duration(milliseconds: 2000));
-    _sequenceController.currentLayer.value = 4;
-    _threatController.updateStagedScores(
-      seq.threatScore.kmerScore,
-      seq.threatScore.esm2Score,
-      seq.threatScore.structuralTmScore,
-      seq.threatScore.combinedThreatIndex,
-    );
-
-    // Stage 4: 7s -> Layer 5 Gemini Stream
-    await Future.delayed(const Duration(milliseconds: 2000));
-    _sequenceController.currentLayer.value = 5;
-    await _briefController.fetchBriefStream(seq.id);
-
-    // Stage 5: 9s -> Layer 6 Action dispatch
-    await Future.delayed(const Duration(milliseconds: 2000));
-    _sequenceController.currentLayer.value = 6;
-    _threatController.alertFired.value = true;
-
-    replayActive.value = false;
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../theme/app_theme.dart';
+import 'highlighted_brief_text.dart';
 
 class AlertBriefCard extends StatelessWidget {
   final String whoText;
@@ -106,21 +107,10 @@ class AlertBriefCard extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: w * 0.01, horizontal: w * 0.025),
       child: SingleChildScrollView(
-        child: SelectableText(
-          text,
-          textAlign: isRtl ? TextAlign.right : TextAlign.left,
-          textDirection: isRtl ? TextDirection.rtl : TextDirection.ltr,
-          style: isUrdu
-              ? GoogleFonts.notoNastaliqUrdu(
-                  color: AppTheme.primaryText,
-                  fontSize: w * 0.035,
-                  height: 2,
-                )
-              : GoogleFonts.outfit(
-                  color: AppTheme.primaryText,
-                  fontSize: w * 0.038,
-                  height: 1.5,
-                ),
+        child: HighlightedBriefText(
+          text: text,
+          w: w,
+          isUrdu: isUrdu,
         ),
       ),
     );

@@ -90,6 +90,8 @@ class ResourceController extends GetxController {
     }
     if (list.isEmpty) return;
 
+    print('Raw history count: ${list.length}');
+
     // Reset resource pool counts
     whoTeamsAvailable.value = 3;
     labNetworksAvailable.value = 5;
@@ -106,6 +108,7 @@ class ResourceController extends GetxController {
       }
     }
     final deduplicatedList = uniqueSequences.values.toList();
+    print('Filtered history count: ${deduplicatedList.length}');
 
     // Sort by threat index descending
     deduplicatedList.sort((a, b) => b.threatScore.combinedThreatIndex.compareTo(a.threatScore.combinedThreatIndex));

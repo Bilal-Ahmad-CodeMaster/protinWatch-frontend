@@ -36,6 +36,9 @@ class ActionPanelWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final w = MediaQuery.sizeOf(context).width;
+    print(
+      'ActionPanelWidget DEBUG: virusName=$virusName, isActive=$isActive, threatIndex=$threatIndex, esm2Score=$esm2Score',
+    );
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 400),
       transitionBuilder: (child, animation) =>
@@ -81,19 +84,26 @@ class ActionPanelWidget extends StatelessWidget {
   }
 
   Widget _buildAfterState(double w) {
+    final score = threatIndex ?? 91;
+    final Color color;
+    if (score > 75) {
+      color = AppTheme.criticalRed;
+    } else if (score >= 50) {
+      color = AppTheme.warningAmber;
+    } else {
+      color = AppTheme.safeGreen;
+    }
+
     return Container(
       key: const ValueKey('after'),
       padding: EdgeInsets.symmetric(horizontal: w * 0.04, vertical: w * 0.02),
       decoration: BoxDecoration(
         color: AppTheme.cardSurface,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: AppTheme.criticalRed.withValues(alpha: 0.25),
-          width: 1.5,
-        ),
+        border: Border.all(color: color.withValues(alpha: 0.25), width: 1.5),
         boxShadow: [
           BoxShadow(
-            color: AppTheme.criticalRed.withValues(alpha: 0.04),
+            color: color.withValues(alpha: 0.04),
             blurRadius: 20,
             spreadRadius: 2,
           ),
