@@ -36,9 +36,6 @@ class ActionPanelWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final w = MediaQuery.sizeOf(context).width;
-    print(
-      'ActionPanelWidget DEBUG: virusName=$virusName, isActive=$isActive, threatIndex=$threatIndex, esm2Score=$esm2Score',
-    );
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 400),
       transitionBuilder: (child, animation) =>
@@ -125,10 +122,12 @@ class ActionPanelWidget extends StatelessWidget {
             esm2Score: esm2Score,
             structuralScore: structuralScore,
           ),
+          if (score >= 50) ...[
+            Divider(height: w * 0.06, color: AppTheme.cardBorder, thickness: 1.5),
+            ActionPanelActions(alertId: alertId, threatIndex: score),
+          ],
           Divider(height: w * 0.06, color: AppTheme.cardBorder, thickness: 1.5),
-          ActionPanelActions(alertId: alertId),
-          Divider(height: w * 0.06, color: AppTheme.cardBorder, thickness: 1.5),
-          ActionPanelTrace(alertId: alertId, agentTrace: agentTrace),
+          ActionPanelTrace(alertId: alertId, threatIndex: score, agentTrace: agentTrace),
         ],
       ),
     );

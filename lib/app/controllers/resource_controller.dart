@@ -70,7 +70,7 @@ class ResourceController extends GetxController {
     super.onInit();
     // Watch hasConflict and print change to console
     ever(hasConflict, (val) {
-      print('ResourceController: hasConflict = $val');
+      // hasConflict changed
     });
 
     // Initialize allocations using sequence controller data
@@ -90,8 +90,6 @@ class ResourceController extends GetxController {
     }
     if (list.isEmpty) return;
 
-    print('Raw history count: ${list.length}');
-
     // Reset resource pool counts
     whoTeamsAvailable.value = 3;
     labNetworksAvailable.value = 5;
@@ -109,7 +107,7 @@ class ResourceController extends GetxController {
       }
     }
     final deduplicatedList = uniqueSequences.values.toList();
-    print('Filtered history count: ${deduplicatedList.length}');
+
 
     // Sort by threat index descending
     deduplicatedList.sort(
@@ -256,6 +254,21 @@ class ResourceController extends GetxController {
       (a) => a.status == 'QUEUED',
     );
     return firstQueued?.virusName;
+  }
+
+  /// Returns the name of the first REAL critical virus from assignments.
+  /// A "real" virus is any non-simulated virus with threatScore > 75.
+  /// Falls back to 'Novel-H7N2' only when no real critical virus exists at all.
+  String get conflictVirusName => getTargetThreatName();
+
+  String getTargetThreatName() {
+    // First check real assignments for any CRITICAL virus (not simulated)
+    final realCritical = assignments.firstWhereOrNull(
+      (a) => a.threatScore > 75 && a.virusName != 'Novel-H7N2',
+    );
+    if (realCritical != null) return realCritical.virusName;
+    // Fallback to simulation virus
+    return 'Novel-H7N2';
   }
 
   void resolveConflict(String action) {

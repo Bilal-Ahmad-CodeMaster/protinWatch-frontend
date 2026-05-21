@@ -40,24 +40,12 @@ class ApiService extends GetxService {
     _dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) {
-          print(
-            '🌐 API CALL: [${options.method}] ${options.baseUrl}${options.path}',
-          );
-          if (options.queryParameters.isNotEmpty) {
-            print('   Params: ${options.queryParameters}');
-          }
           return handler.next(options);
         },
         onResponse: (response, handler) {
-          print(
-            '✅ API RESPONSE: [${response.statusCode}] ${response.requestOptions.path}',
-          );
           return handler.next(response);
         },
         onError: (DioException e, handler) {
-          print(
-            '❌ API ERROR: [${e.response?.statusCode}] ${e.requestOptions.path} -> ${e.message}',
-          );
           return handler.next(e);
         },
       ),
@@ -70,7 +58,7 @@ class ApiService extends GetxService {
       );
       _offlineData = jsonDecode(jsonString);
     } catch (e) {
-      print('Warning: Could not load offline mock data: $e');
+      // Offline data load error ignored
     }
 
     return this;
@@ -92,7 +80,6 @@ class ApiService extends GetxService {
       );
       return SequenceModel.fromJson(response.data);
     } catch (e) {
-      print('API Error (analyze), using offline fallback: $e');
       if (_offlineData != null) {
         final data = Map<String, dynamic>.from(_offlineData!);
         data['name'] = 'H5N7 Variant';
@@ -109,7 +96,6 @@ class ApiService extends GetxService {
   }
 
   Future<List<SequenceModel>> getHistory({int? limit}) async {
-    print('DEBUG: ApiService.getHistory() called');
     try {
       final response = await _dio.get(
         '/history',
@@ -119,7 +105,6 @@ class ApiService extends GetxService {
           .map((e) => SequenceModel.fromJson(e))
           .toList();
     } catch (e) {
-      print('API Error (history), using offline fallback: $e');
       if (_offlineData != null) {
         return [
           SequenceModel(
@@ -225,17 +210,15 @@ class ApiService extends GetxService {
   Future<String> getStructure(String sequenceId) async {
     try {
       final response = await _dio.get('/structure/$sequenceId');
-      print('PDB Response for $sequenceId: ${response.data}');
+      // print('PDB Response for $sequenceId: ${response.data}');
       if (response.data is Map && response.data.containsKey('pdb')) {
         return response.data['pdb'].toString();
       }
       return response.data.toString();
     } catch (e) {
-      print('API Error (structure), using offline fallback: $e');
       try {
         return await rootBundle.loadString('assets/mock/crio_protein.pdb');
       } catch (err) {
-        print('Error loading offline protein PDB file: $err');
         return _getOfflineData('pdb_structure', '');
       }
     }
@@ -279,7 +262,7 @@ class ApiService extends GetxService {
         }
       }
     } catch (e) {
-      print('API Error (stream-brief), using offline fallback: $e');
+      // Simulated SSE streaming from offline data
       final fullText = language == 'ur'
           ? _getOfflineData('gemini_brief_ur', 'کوئی ڈیٹا دستیاب نہیں ہے۔')
           : _getOfflineData('gemini_brief_en', 'No brief available.');
@@ -300,7 +283,6 @@ class ApiService extends GetxService {
       );
       return AlertModel.fromJson(response.data);
     } catch (e) {
-      print('API Error (simulate-action), using offline fallback: $e');
       if (_offlineData != null && _offlineData!['alert_ticket'] != null) {
         return AlertModel.fromJson(_offlineData!['alert_ticket']);
       }
@@ -315,7 +297,6 @@ class ApiService extends GetxService {
           .map((e) => AgentStepModel.fromJson(e))
           .toList();
     } catch (e) {
-      print('API Error (agent-trace), using offline fallback: $e');
       if (_offlineData != null && _offlineData!['agent_trace'] != null) {
         return (_offlineData!['agent_trace'] as List)
             .map((e) => AgentStepModel.fromJson(e))
@@ -330,8 +311,7 @@ class ApiService extends GetxService {
       await _dio.post('/scheduler/update', data: {'label': label});
       return true;
     } catch (e) {
-      print('API Error (scheduler/update): $e');
-      return true;
+      return true; // Pretend it succeeded for demo
     }
   }
 
@@ -340,7 +320,6 @@ class ApiService extends GetxService {
       await _dio.post('/live-fetch');
       return true;
     } catch (e) {
-      print('API Error (live-fetch): $e');
       return true;
     }
   }
@@ -350,7 +329,6 @@ class ApiService extends GetxService {
       final response = await _dio.get('/health');
       return response.data as Map<String, dynamic>;
     } catch (e) {
-      print('API Error (health): $e');
       return {'model_loaded': false, 'error': e.toString()};
     }
   }
