@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'app/theme/app_theme.dart';
-import 'app/views/screens/splash_screen.dart';
-import 'app/services/api_service.dart';
-import 'app/controllers/sequence_controller.dart';
-import 'app/controllers/threat_controller.dart';
-import 'app/controllers/brief_controller.dart';
-import 'app/controllers/map_controller.dart';
-import 'app/controllers/replay_controller.dart';
-import 'app/controllers/resource_controller.dart';
+import 'package:crio_app/app/theme/app_theme.dart';
+import 'package:crio_app/app/views/screens/splash_screen.dart';
+import 'package:crio_app/app/services/api_service.dart';
+import 'package:crio_app/app/controllers/sequence_controller.dart';
+import 'package:crio_app/app/controllers/threat_controller.dart';
+import 'package:crio_app/app/controllers/brief_controller.dart';
+import 'package:crio_app/app/controllers/map_controller.dart';
+import 'package:crio_app/app/controllers/replay_controller.dart';
+import 'package:crio_app/app/controllers/resource_controller.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

@@ -23,6 +23,7 @@ class AlertsScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: SafeArea(
+        bottom: false,
         child: Obx(() {
           final assignments = resourceController.assignments;
 
@@ -128,7 +129,7 @@ class AlertsScreen extends StatelessWidget {
               Expanded(
                 child: SingleChildScrollView(
                   padding: EdgeInsets.only(
-                    bottom: MediaQuery.of(context).padding.bottom + w * 0.2,
+                    bottom: MediaQuery.of(context).padding.bottom + w * 0.28,
                   ),
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: w * 0.04),

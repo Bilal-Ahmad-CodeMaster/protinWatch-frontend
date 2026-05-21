@@ -8,6 +8,7 @@ import '../widgets/pipeline_stepper.dart';
 import '../widgets/threat/threat_score_card.dart';
 import '../widgets/action_panel/action_panel.dart';
 import '../widgets/alert_brief_card.dart';
+import 'protein_structure_viewer_screen.dart';
 
 class AnalysisResultsScreen extends StatelessWidget {
   final String sequence;
@@ -44,7 +45,7 @@ class AnalysisResultsScreen extends StatelessWidget {
           left: w * 0.04,
           right: w * 0.04,
           top: w * 0.02,
-          bottom: w * 0.02,
+          bottom: MediaQuery.of(context).padding.bottom + w * 0.04,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -183,6 +184,84 @@ class AnalysisResultsScreen extends StatelessWidget {
                     structuralScore: score.structuralTmScore, // Already 0.0 - 1.0 range
                   ).animate().fade().scale(),
                   SizedBox(height: w * 0.03),
+                  if (result.pdbStructure.isNotEmpty) ...[
+                    GestureDetector(
+                      onTap: () {
+                        Get.to(
+                          () => ProteinStructureViewerScreen(sequence: result),
+                          transition: Transition.rightToLeft,
+                          duration: const Duration(milliseconds: 300),
+                        );
+                      },
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: w * 0.04,
+                          vertical: w * 0.03,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppTheme.cardSurface,
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
+                            color: AppTheme.infoBlue.withValues(alpha: 0.3),
+                            width: 1.5,
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppTheme.infoBlue.withValues(alpha: 0.1),
+                              blurRadius: 10,
+                              spreadRadius: 1,
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              padding: EdgeInsets.all(w * 0.02),
+                              decoration: BoxDecoration(
+                                color: AppTheme.infoBlue.withValues(alpha: 0.15),
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(
+                                Icons.view_in_ar,
+                                color: AppTheme.infoBlue,
+                                size: 24,
+                              ),
+                            ),
+                            SizedBox(width: w * 0.03),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    '3D Protein Structure',
+                                    style: GoogleFonts.outfit(
+                                      color: AppTheme.primaryText,
+                                      fontSize: w * 0.038,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  SizedBox(height: w * 0.005),
+                                  Text(
+                                    'Inspect structural folding model in 3D',
+                                    style: GoogleFonts.outfit(
+                                      color: AppTheme.secondaryText,
+                                      fontSize: w * 0.028,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Icon(
+                              Icons.arrow_forward_ios_rounded,
+                              color: AppTheme.secondaryText,
+                              size: w * 0.04,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ).animate().fade().slideY(begin: 0.05),
+                    SizedBox(height: w * 0.03),
+                  ],
                   ActionPanelWidget(
                     isActive: isActiveAlert,
                     alertId: alertId,

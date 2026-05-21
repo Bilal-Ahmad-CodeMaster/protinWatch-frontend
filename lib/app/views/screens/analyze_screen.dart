@@ -167,7 +167,7 @@ class _AnalyzeScreenState extends State<AnalyzeScreen> {
             left: w * 0.04,
             right: w * 0.04,
             top: w * 0.02,
-            bottom: w * 0.1,
+            bottom: MediaQuery.of(context).padding.bottom + w * 0.28,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
