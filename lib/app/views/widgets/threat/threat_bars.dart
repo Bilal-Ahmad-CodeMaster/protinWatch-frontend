@@ -19,7 +19,6 @@ class ThreatBars extends StatelessWidget {
   Widget build(BuildContext context) {
     final w = MediaQuery.sizeOf(context).width;
     final labelWidth = w * 0.22;
-    print('structural value being passed to ThreatBars widget: $structuralScore');
     return Column(
       children: [
         _buildBar(

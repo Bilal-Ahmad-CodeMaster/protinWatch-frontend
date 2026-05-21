@@ -22,7 +22,6 @@ class ThreatScoreCard extends StatelessWidget {
         ? AppTheme.criticalRed
         : (threatIndex >= 50 ? AppTheme.warningAmber : AppTheme.safeGreen);
     final w = MediaQuery.sizeOf(context).width;
-    print('structural value being passed to ThreatScoreCard widget: $structuralScore');
 
     return Card(
       elevation: 2,

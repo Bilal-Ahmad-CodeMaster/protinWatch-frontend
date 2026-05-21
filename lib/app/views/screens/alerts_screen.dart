@@ -450,7 +450,7 @@ class AlertsScreen extends StatelessWidget {
   }
 
   Widget _buildConflictBanner(double w, ResourceController controller) {
-    final nextQueued = controller.getFirstQueuedThreatName() ?? 'Novel-H7N2';
+    final nextQueued = controller.conflictVirusName;
     return Container(
       width: double.infinity,
       decoration: const BoxDecoration(
@@ -698,8 +698,8 @@ class AlertsScreen extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Subtle left border color accent matching threat level color
-              Container(width: 5, color: threatColor),
+              // Animated left border based on status
+              _buildStatusBorderBar(assignment.status),
 
               // Row content
               Expanded(
@@ -801,6 +801,45 @@ class AlertsScreen extends StatelessWidget {
         ),
       ),
     ).animate().fade(delay: Duration(milliseconds: 50 * index)).slideY(begin: 0.05);
+  }
+
+  Widget _buildStatusBorderBar(String status) {
+    const double width = 5;
+    switch (status) {
+      case 'QUEUED':
+        return SizedBox(
+          width: width,
+          child: Container(
+            width: width,
+            color: const Color(0xFF8892A0),
+          )
+              .animate(onPlay: (c) => c.repeat(reverse: true))
+              .fade(begin: 0.25, end: 1.0, duration: 1200.ms),
+        );
+      case 'SPLIT':
+        return SizedBox(
+          width: width,
+          child: Container(
+            width: width,
+            color: const Color(0xFFFFA500),
+          )
+              .animate(onPlay: (c) => c.repeat(reverse: true))
+              .fade(begin: 0.25, end: 1.0, duration: 1200.ms),
+        );
+      case 'ESCALATED':
+        return SizedBox(
+          width: width,
+          child: Container(
+            width: width,
+            color: const Color(0xFFFF4444),
+          )
+              .animate(onPlay: (c) => c.repeat(reverse: true))
+              .fade(begin: 0.15, end: 1.0, duration: 450.ms),
+        );
+      case 'ACTIVE':
+      default:
+        return Container(width: width, color: const Color(0xFF00FF88));
+    }
   }
 
   Widget _buildAnimatedStatusChip(double w, String status, Color statusColor) {

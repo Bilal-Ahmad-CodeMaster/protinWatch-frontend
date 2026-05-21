@@ -4,12 +4,21 @@ import '../../../theme/app_theme.dart';
 
 class ActionPanelActions extends StatelessWidget {
   final String alertId;
+  final int? threatIndex;
 
-  const ActionPanelActions({super.key, required this.alertId});
+  const ActionPanelActions({
+    super.key,
+    required this.alertId,
+    this.threatIndex,
+  });
 
   @override
   Widget build(BuildContext context) {
     final w = MediaQuery.sizeOf(context).width;
+    final score = threatIndex ?? 91;
+    if (score < 50) {
+      return const SizedBox.shrink();
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -29,32 +38,43 @@ class ActionPanelActions extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildActionCard(
-                title: 'WHO Notified',
-                desc: 'Surveillance team alerted. Ref #$alertId',
-                time: '14:30:12 UTC',
-                icon: Icons.business,
-                iconColor: AppTheme.safeGreen,
-                w: w,
-              ),
-              SizedBox(width: w * 0.03),
-              _buildActionCard(
-                title: 'Travel Advisory',
-                desc: 'Flag raised for origin region. Level 2 advisory.',
-                time: '14:30:18 UTC',
-                icon: Icons.flight_takeoff,
-                iconColor: AppTheme.warningAmber,
-                w: w,
-              ),
-              SizedBox(width: w * 0.03),
-              _buildActionCard(
-                title: 'Labs Shared',
-                desc: 'Sequence escalated to high-priority watchlist.',
-                time: '14:30:24 UTC',
-                icon: Icons.science_outlined,
-                iconColor: AppTheme.infoBlue,
-                w: w,
-              ),
+              if (score > 75) ...[
+                _buildActionCard(
+                  title: 'WHO Notified',
+                  desc: 'Surveillance team alerted. Ref #$alertId',
+                  time: '14:30:12 UTC',
+                  icon: Icons.business,
+                  iconColor: AppTheme.safeGreen,
+                  w: w,
+                ),
+                SizedBox(width: w * 0.03),
+                _buildActionCard(
+                  title: 'Travel Advisory',
+                  desc: 'Flag raised for origin region. Level 2 advisory.',
+                  time: '14:30:18 UTC',
+                  icon: Icons.flight_takeoff,
+                  iconColor: AppTheme.warningAmber,
+                  w: w,
+                ),
+                SizedBox(width: w * 0.03),
+                _buildActionCard(
+                  title: 'Labs Shared',
+                  desc: 'Sequence escalated to high-priority watchlist.',
+                  time: '14:30:24 UTC',
+                  icon: Icons.science_outlined,
+                  iconColor: AppTheme.infoBlue,
+                  w: w,
+                ),
+              ] else if (score >= 50) ...[
+                _buildActionCard(
+                  title: 'Surveillance Watchlist',
+                  desc: 'Sequence added to surveillance watchlist. No immediate action required.',
+                  time: '14:30:24 UTC',
+                  icon: Icons.visibility,
+                  iconColor: AppTheme.infoBlue,
+                  w: w,
+                ),
+              ],
             ],
           ),
         ),

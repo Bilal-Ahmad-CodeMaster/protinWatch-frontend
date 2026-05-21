@@ -136,7 +136,6 @@ class BriefController extends GetxController {
         }
       }
     } catch (e) {
-      print('BriefController streaming error: $e');
       briefText.value = language.value == 'ur'
           ? 'تفصیلات حاصل کرنے میں دشواری پیش آئی۔'
           : 'Failed to compile brief.';
@@ -183,7 +182,6 @@ class BriefController extends GetxController {
         }
       }
     } catch (e) {
-      print('BriefController streaming error: $e');
       briefText.value = language.value == 'ur'
           ? 'تفصیلات حاصل کرنے میں دشواری پیش آئی۔'
           : 'Failed to compile brief.';

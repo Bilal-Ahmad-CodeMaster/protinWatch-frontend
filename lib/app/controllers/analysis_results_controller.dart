@@ -155,7 +155,6 @@ class AnalysisResultsController extends GetxController {
           }
         }
       } catch (e) {
-        print('Error streaming briefs: $e');
         geminiBriefEn.value = 'Failed to compile English brief.';
         geminiBriefUr.value = 'Failed to compile Urdu brief.';
       }
@@ -175,7 +174,6 @@ class AnalysisResultsController extends GetxController {
       isLoading.value = false;
       showResults.value = true;
     } catch (e) {
-      print('Analysis Error: $e');
       errorMessage.value = e.toString();
       isLoading.value = false;
 

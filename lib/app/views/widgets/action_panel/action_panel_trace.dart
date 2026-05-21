@@ -6,11 +6,13 @@ import '../../../models/sequence_model.dart';
 class ActionPanelTrace extends StatefulWidget {
   final String alertId;
   final List<AgentStepModel>? agentTrace;
+  final int? threatIndex;
 
   const ActionPanelTrace({
     super.key,
     required this.alertId,
     this.agentTrace,
+    this.threatIndex,
   });
 
   @override
@@ -92,6 +94,7 @@ class _ActionPanelTraceState extends State<ActionPanelTrace> {
 
   Widget _buildAgentTraceList(double w) {
     final steps = _getTraceSteps();
+    final score = widget.threatIndex ?? 91;
     return AnimatedCrossFade(
       firstChild: const SizedBox.shrink(),
       secondChild: Container(
@@ -103,11 +106,72 @@ class _ActionPanelTraceState extends State<ActionPanelTrace> {
           border: Border.all(color: AppTheme.cardBorder.withValues(alpha: 0.5)),
         ),
         child: Column(
-          children: List.generate(steps.length, (index) {
-            final step = steps[index];
-            final isLast = index == steps.length - 1;
-            return _buildTraceStepItem(step, index + 1, isLast, w);
-          }),
+          children: [
+            ...List.generate(steps.length, (index) {
+              final step = steps[index];
+              final isLast = index == steps.length - 1;
+              return _buildTraceStepItem(step, index + 1, isLast, w);
+            }),
+            if (score >= 50 && score <= 75) ...[
+              SizedBox(height: w * 0.02),
+              Container(
+                padding: EdgeInsets.all(w * 0.03),
+                decoration: BoxDecoration(
+                  color: Colors.grey.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: Colors.grey.withValues(alpha: 0.3)),
+                ),
+                child: Row(
+                  children: [
+                    Text(
+                      'ℹ️',
+                      style: TextStyle(fontSize: w * 0.04),
+                    ),
+                    SizedBox(width: w * 0.02),
+                    Expanded(
+                      child: Text(
+                        'Threat level does not require WHO notification or resource dispatch',
+                        style: GoogleFonts.outfit(
+                          color: Colors.grey[400],
+                          fontSize: w * 0.03,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ] else if (score < 50) ...[
+              SizedBox(height: w * 0.02),
+              Container(
+                padding: EdgeInsets.all(w * 0.03),
+                decoration: BoxDecoration(
+                  color: AppTheme.safeGreen.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: AppTheme.safeGreen.withValues(alpha: 0.3)),
+                ),
+                child: Row(
+                  children: [
+                    Text(
+                      '✅',
+                      style: TextStyle(fontSize: w * 0.04),
+                    ),
+                    SizedBox(width: w * 0.02),
+                    Expanded(
+                      child: Text(
+                        'Sequence is safe. Monitoring continues normally.',
+                        style: GoogleFonts.outfit(
+                          color: AppTheme.safeGreen,
+                          fontSize: w * 0.03,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ],
         ),
       ),
       crossFadeState: _isTraceExpanded ? CrossFadeState.showSecond : CrossFadeState.showFirst,
@@ -215,34 +279,58 @@ class _ActionPanelTraceState extends State<ActionPanelTrace> {
   }
 
   List<AgentStepModel> _getTraceSteps() {
-    if (widget.agentTrace != null && widget.agentTrace!.isNotEmpty) {
-      return widget.agentTrace!;
+    final score = widget.threatIndex ?? 91;
+    if (score > 75) {
+      return [
+        AgentStepModel(
+          agent: 'DetectionAgent',
+          action: "Threat Index $score/100 - threshold exceeded",
+          timestamp: '14:30:05 UTC - 0.4s',
+          color: 'blue',
+        ),
+        AgentStepModel(
+          agent: 'VerificationAgent',
+          action: "AlphaFold structural confirmation checked",
+          timestamp: '14:30:07 UTC - 1.2s',
+          color: 'purple',
+        ),
+        AgentStepModel(
+          agent: 'ResponseAgent',
+          action: "Alert ${widget.alertId} created and dispatched",
+          timestamp: '14:30:09 UTC - 0.1s',
+          color: 'red',
+        ),
+        AgentStepModel(
+          agent: 'NotificationAgent',
+          action: "WHO + stakeholders notified",
+          timestamp: '14:30:10 UTC - 0.2s',
+          color: 'green',
+        ),
+      ];
+    } else if (score >= 50) {
+      return [
+        AgentStepModel(
+          agent: 'DetectionAgent',
+          action: "Threat Index $score/100 - under critical threshold",
+          timestamp: '14:30:05 UTC - 0.4s',
+          color: 'blue',
+        ),
+        AgentStepModel(
+          agent: 'MonitoringAgent',
+          action: "Sequence added to surveillance watchlist. No immediate action required.",
+          timestamp: '14:30:07 UTC - 0.8s',
+          color: 'orange',
+        ),
+      ];
+    } else {
+      return [
+        AgentStepModel(
+          agent: 'DetectionAgent',
+          action: "Threat Index $score/100 - classified as safe. No action required.",
+          timestamp: '14:30:05 UTC - 0.4s',
+          color: 'blue',
+        ),
+      ];
     }
-    return [
-      AgentStepModel(
-        agent: 'DetectionAgent',
-        action: 'Threat Index 91/100 computed — exceeded critical threshold of 75',
-        timestamp: '14:30:05 UTC · 0.4s',
-        color: 'blue',
-      ),
-      AgentStepModel(
-        agent: 'VerificationAgent',
-        action: 'AlphaFold structural match confirmed · TM-score 0.84 · Foldseek hit',
-        timestamp: '14:30:07 UTC · 1.2s',
-        color: 'purple',
-      ),
-      AgentStepModel(
-        agent: 'ResponseAgent',
-        action: 'Alert ${widget.alertId} created, dispatched to all stakeholders',
-        timestamp: '14:30:09 UTC · 0.1s',
-        color: 'red',
-      ),
-      AgentStepModel(
-        agent: 'NotificationAgent',
-        action: 'WHO + travel authority + lab network notified successfully',
-        timestamp: '14:30:10 UTC · 0.2s',
-        color: 'green',
-      ),
-    ];
   }
 }
